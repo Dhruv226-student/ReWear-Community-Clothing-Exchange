@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { AlertTriangle, CheckCircle, XCircle, Users, Package, Flag, Search } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+import { updateItemsStatus } from "@/services/api/admin"
 
 export default function AdminPage() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -18,55 +19,17 @@ export default function AdminPage() {
   const { toast } = useToast()
 
   const { data: pendingItems = [], isLoading: pendingLoading } = usePendingItems()
-  const { data: reportedItems = [], isLoading: reportsLoading } = useReportedItems()
   const { data: users = [], isLoading: usersLoading } = useUsers()
 
+  console.log(users , "users")
   const handleApproveItem = (itemId) => {
-    // Mock approval - replace with actual API call
-    toast({
-      title: "Item approved",
-      description: "The item has been approved and is now live.",
-    })
+    updateItemsStatus({ itemId, status: "Approved" })
   }
-
+  
   const handleRejectItem = (itemId) => {
-    // Mock rejection - replace with actual API call
-    toast({
-      title: "Item rejected",
-      description: "The item has been rejected and removed.",
-      variant: "destructive",
-    })
-  }
+    updateItemsStatus({ itemId, status: "Rejected" })
+  }  
 
-  const handleResolveReport = (itemId) => {
-    // Mock resolution - replace with actual API call
-    toast({
-      title: "Report resolved",
-      description: "The reported item has been reviewed and resolved.",
-    })
-  }
-
-  const stats = [
-    {
-      title: "Pending Reviews",
-      value: pendingItems.length,
-      icon: AlertTriangle,
-      color: "text-yellow-600",
-    },
-    {
-      title: "Active Users",
-      value: users.filter((u) => u.status === "active").length,
-      icon: Users,
-      color: "text-green-600",
-    },
-    {
-      title: "Total Items",
-      value: 156,
-      icon: Package,
-      color: "text-blue-600",
-    },
-   
-  ]
 
   return (
     <div className="min-h-screen bg-background">
@@ -77,20 +40,7 @@ export default function AdminPage() {
           <p className="text-muted-foreground">Manage items, users, and platform moderation.</p>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {stats.map((stat, index) => (
-            <Card key={index}>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
-                <stat.icon className={`h-4 w-4 ${stat.color}`} />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stat.value}</div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+       
 
         {/* Main Content */}
         <Tabs defaultValue="pending" className="space-y-6">
@@ -129,9 +79,9 @@ export default function AdminPage() {
                   </Card>
                 ))}
               </div>
-            ) : pendingItems.length > 0 ? (
+            ) : pendingItems?.data?.results?.length > 0 ? (
               <div className="space-y-4">
-                {pendingItems.map((item) => (
+                {pendingItems?.data?.results?.map((item) => (
                   <Card key={item.id}>
                     <CardContent className="p-6">
                       <div className="flex gap-4">
@@ -145,7 +95,7 @@ export default function AdminPage() {
                             <div>
                               <h3 className="font-semibold text-lg">{item.title}</h3>
                               <p className="text-sm text-muted-foreground">
-                                by {item.userName} • {item.category} • {item.condition}
+                                by {item.owner.first_name + " " + item.owner.last_name} • {item.category} • {item.condition}
                               </p>
                             </div>
                             <Badge variant="outline">Pending Review</Badge>
@@ -154,18 +104,15 @@ export default function AdminPage() {
                           <div className="flex gap-2">
                             <Button
                               size="sm"
-                              onClick={() => handleApproveItem(item.id)}
+                              onClick={() => handleApproveItem(item._id)}
                               className="bg-green-600 hover:bg-green-700"
                             >
                               <CheckCircle className="h-4 w-4 mr-2" />
                               Approve
                             </Button>
-                            <Button size="sm" variant="destructive" onClick={() => handleRejectItem(item.id)}>
+                            <Button size="sm" variant="destructive" onClick={() => handleRejectItem(item._id)}>
                               <XCircle className="h-4 w-4 mr-2" />
                               Reject
-                            </Button>
-                            <Button size="sm" variant="outline">
-                              View Details
                             </Button>
                           </div>
                         </div>
@@ -235,17 +182,15 @@ export default function AdminPage() {
               </div>
             ) : (
               <div className="space-y-4">
-                {users.map((user) => (
+                {users?.data?.results?.map((user) => (
                   <Card key={user.id}>
                     <CardContent className="p-6">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
                           <div>
-                            <h3 className="font-semibold">{user.name}</h3>
+                            <h3 className="font-semibold">{user.first_name + " " + user.last_name}</h3>
                             <p className="text-sm text-muted-foreground">{user.email}</p>
-                            <p className="text-xs text-muted-foreground">
-                              Joined {new Date(user.joinDate).toLocaleDateString()}
-                            </p>
+                          
                           </div>
                         </div>
                         <div className="flex items-center gap-6">
@@ -261,15 +206,7 @@ export default function AdminPage() {
                             <div className="text-lg font-semibold text-green-600">{user.points}</div>
                             <div className="text-xs text-muted-foreground">Points</div>
                           </div>
-                          <Badge variant={user.status === "active" ? "default" : "destructive"}>{user.status}</Badge>
-                          <div className="flex gap-2">
-                            <Button size="sm" variant="outline">
-                              View Profile
-                            </Button>
-                            <Button size="sm" variant="outline">
-                              Message
-                            </Button>
-                          </div>
+                          <Badge variant={user.is_active ? "default" : "destructive"}>{user.is_active ? "active" : "In Active"}</Badge>
                         </div>
                       </div>
                     </CardContent>

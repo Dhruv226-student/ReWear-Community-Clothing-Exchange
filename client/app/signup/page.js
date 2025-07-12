@@ -53,7 +53,12 @@ export default function SignupPage() {
           description:
             "Your account has been created successfully. You received 50 welcome points!",
         });
-        router.push("/dashboard");
+        if(result.data.data.user.role.role === "User") {
+          router.push("/dashboard");
+        }
+        else{
+          router.push("/admin")
+        }
       } else {
         toast({
           title: "Registration failed",

@@ -37,7 +37,7 @@ export function Hero() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
-             {user?.role?.role === "user" &&
+             {user?.role?.role === "User" &&
               <Button size="lg" asChild>
                 <Link href="/dashboard">
                   Start Swapping

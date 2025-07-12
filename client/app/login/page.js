@@ -31,11 +31,18 @@ export default function LoginPage() {
       const result = await login(email, password);
 
       if (result.success) {
+        console.log(result , "result")
         toast({
           title: "Welcome back!",
           description: "You have been successfully logged in.",
         });
-        router.push("/dashboard");
+
+        if(result.data.data.user.role.role === "User") {
+          router.push("/dashboard");
+        }
+        else{
+          router.push("/admin")
+        }
       } else {
         toast({
           title: "Login failed",
