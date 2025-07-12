@@ -95,12 +95,12 @@ export const api = {
 
   // Replace the existing getFeaturedItems method in your lib/api.js
 
-  getFeaturedItems: async () => {
+  getFeaturedItems: async (limit = 1000000) => {
     try {
-      const response = await axiosInstance.get(`item/list?limit=4&page=1`);
-      console.log("=====response=====", response);
+      const response = await axiosInstance.get(
+        `item/list?limit=${limit}&page=1`
+      );
       const data = await response?.data;
-      console.log("=====data=====", data);
 
       if (!data.success) {
         throw new Error("Failed to fetch featured items");

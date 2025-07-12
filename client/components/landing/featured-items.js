@@ -8,7 +8,11 @@ import { Heart, Star } from "lucide-react";
 import Link from "next/link";
 
 export function FeaturedItems() {
-  const { data: featuredItems = [], isLoading, error } = useFeaturedItems();
+  const {
+    data: featuredItems = [],
+    isLoading,
+    error,
+  } = useFeaturedItems({ limit: 1 });
 
   if (isLoading) {
     return (
@@ -68,7 +72,7 @@ export function FeaturedItems() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {featuredItems.map((item) => (
+          {featuredItems.slice(0, 4).map((item) => (
             <Card
               key={item._id}
               className="group hover:shadow-lg transition-shadow"
