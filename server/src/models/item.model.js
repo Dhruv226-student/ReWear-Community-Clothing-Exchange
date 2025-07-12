@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
-const { ITEM } = require('../helper/constant.helper');
+const { ITEM, FILES_FOLDER } = require('../helper/constant.helper');
 const { paginate } = require('./plugins');
+const config = require('../config/config');
 
 const itemSchema = new mongoose.Schema(
     {
@@ -23,6 +24,16 @@ const itemSchema = new mongoose.Schema(
     {
         timestamps: true,
         versionKey: false,
+        toJSON: {
+            transform: function (_doc, ret) {
+                ret.images =
+                    ret.images?.length && !ret.images?.includes('', null)
+                        ? ret.images.map(
+                              (image) => `${config.base_url}/${FILES_FOLDER.clothImages}/${image}`
+                          )
+                        : [];
+            },
+        },
     }
 );
 
