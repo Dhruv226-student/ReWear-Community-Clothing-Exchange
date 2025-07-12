@@ -20,6 +20,7 @@ const itemSchema = new mongoose.Schema(
         },
         exchange_points: Number,
         owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+        first_approval: Boolean,
     },
     {
         timestamps: true,
