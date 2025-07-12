@@ -11,7 +11,7 @@ const router = express.Router();
 /**
  * Get user.
  */
-router.get('/get', auth(ROLES.user), userController.getUser);
+router.get('/get', auth(ROLES.user, ROLES.admin), userController.getUser);
 
 /**
  * Update user.
