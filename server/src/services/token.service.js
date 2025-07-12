@@ -34,7 +34,7 @@ const generateAuthTokens = async (user) => {
 
     const userRole = roleDetails.role === ROLES.user ? ROLES.user : ROLES.admin;
 
-    const accessTokenExpires = moment().add(process.env.JWT_ACCESS_EXPIRATION_MINUTES, 'minutes');
+    const accessTokenExpires = moment().add(process.env.JWT_ACCESS_EXPIRATION_MINUTES, 'days');
     const accessToken = generateToken(user._id, accessTokenExpires, TOKEN_TYPES.access, userRole);
 
     const refreshTokenExpires = moment().add(config.jwt.refreshExpirationDays, 'days');
