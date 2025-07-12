@@ -35,7 +35,7 @@ module.exports = {
     ITEM: {
         STATUS: {
             pending: 'Pending',
-            available: 'Approved',
+            approved: 'Approved',
             rejected: 'Rejected',
             swapped:'Swapped'
         },
