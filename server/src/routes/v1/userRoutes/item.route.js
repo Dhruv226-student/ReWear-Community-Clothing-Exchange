@@ -23,12 +23,22 @@ router.post(
 );
 
 /** Get List */
-router.get('/list', validate(itemValidation.getList), itemController.getAllItems);
+router.get('/list', auth(ROLES.user), validate(itemValidation.getList), itemController.getAllItems);
 
 /** Get Details */
-router.get('/details/:id', validate(itemValidation.getDetails), itemController.getDetails);
+router.get(
+    '/details/:itemId',
+    auth(ROLES.user),
+    validate(itemValidation.getDetails),
+    itemController.getDetails
+);
 
 /** Delete */
-router.delete('/delete/:id', validate(itemValidation.getDetails), itemController.deleteItem);
+router.delete(
+    '/delete/:itemId',
+    auth(ROLES.user),
+    validate(itemValidation.getDetails),
+    itemController.deleteItem
+);
 
 module.exports = router;

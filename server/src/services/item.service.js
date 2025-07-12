@@ -30,6 +30,16 @@ exports.getAllItems = async (filter, projection = {}, options = {}) => {
 };
 
 /**
+ * Get item list with pagination
+ * @param {Object} filter
+ * @param {Object} options
+ * @returns {Promise<Item>}
+ */
+exports.getAllItemsWithPagination = async (filter, options = {}) => {
+    return Item.paginate(filter, options);
+};
+
+/**
  * Get details
  * @param {Object} filter
  * @param {Object} projection
