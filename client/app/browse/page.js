@@ -1,28 +1,43 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useItems } from "@/hooks/useItems"
-import { Header } from "@/components/layout/header"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Label } from "@/components/ui/label"
-import { Search, Filter, Heart } from "lucide-react"
-import Link from "next/link"
+import { useState } from "react";
+import { useItems } from "@/hooks/useItems";
+import { Header } from "@/components/layout/header";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Label } from "@/components/ui/label";
+import { Search, Filter, Heart } from "lucide-react";
+import Link from "next/link";
 
-const categories = ["All", "Tops", "Bottoms", "Dresses", "Outerwear", "Shoes", "Accessories", "Formal"]
-const conditions = ["All", "Like New", "Excellent", "Good", "Fair"]
-const sizes = ["All", "XS", "S", "M", "L", "XL", "XXL"]
+const categories = [
+  "All",
+  "Tops",
+  "Bottoms",
+  "Dresses",
+  "Outerwear",
+  "Shoes",
+  "Accessories",
+  "Formal",
+];
+const conditions = ["All", "Like New", "Excellent", "Good", "Fair"];
+const sizes = ["All", "XS", "S", "M", "L", "XL", "XXL"];
 
 export default function BrowsePage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState("All")
-  const [selectedCondition, setSelectedCondition] = useState("All")
-  const [selectedSize, setSelectedSize] = useState("All")
-  const [sortBy, setSortBy] = useState("newest")
-  const [showFilters, setShowFilters] = useState(false)
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedCondition, setSelectedCondition] = useState("All");
+  const [selectedSize, setSelectedSize] = useState("All");
+  const [sortBy, setSortBy] = useState("newest");
+  const [showFilters, setShowFilters] = useState(false);
 
   const {
     data: items = [],
@@ -34,36 +49,44 @@ export default function BrowsePage() {
     condition: selectedCondition,
     size: selectedSize,
     sort: sortBy,
-  })
+  });
 
   const filteredItems = items.filter((item) => {
     const matchesSearch =
       item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.tags.some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase()))
-    const matchesCategory = selectedCategory === "All" || item.category === selectedCategory
-    const matchesCondition = selectedCondition === "All" || item.condition === selectedCondition
-    const matchesSize = selectedSize === "All" || item.size === selectedSize
+      item.tags.some((tag) =>
+        tag.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    const matchesCategory =
+      selectedCategory === "All" || item.category === selectedCategory;
+    const matchesCondition =
+      selectedCondition === "All" || item.condition === selectedCondition;
+    const matchesSize = selectedSize === "All" || item.size === selectedSize;
 
-    return matchesSearch && matchesCategory && matchesCondition && matchesSize
-  })
+    return matchesSearch && matchesCategory && matchesCondition && matchesSize;
+  });
 
   const sortedItems = [...filteredItems].sort((a, b) => {
     switch (sortBy) {
       case "newest":
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
       case "oldest":
-        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        return (
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
       case "points-high":
-        return b.pointsValue - a.pointsValue
+        return b.pointsValue - a.pointsValue;
       case "points-low":
-        return a.pointsValue - b.pointsValue
+        return a.pointsValue - b.pointsValue;
       case "title":
-        return a.title.localeCompare(b.title)
+        return a.title.localeCompare(b.title);
       default:
-        return 0
+        return 0;
     }
-  })
+  });
 
   if (error) {
     return (
@@ -71,20 +94,24 @@ export default function BrowsePage() {
         <Header />
         <div className="container py-8">
           <div className="text-center">
-            <p className="text-muted-foreground">Failed to load items. Please try again later.</p>
+            <p className="text-muted-foreground">
+              Failed to load items. Please try again later.
+            </p>
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <div className="container py-8">
+      <div className="container py-8 mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">Browse Items</h1>
-          <p className="text-muted-foreground">Discover unique pieces from our community of fashion lovers.</p>
+          <p className="text-muted-foreground">
+            Discover unique pieces from our community of fashion lovers.
+          </p>
         </div>
 
         {/* Search and Filters */}
@@ -99,7 +126,11 @@ export default function BrowsePage() {
                 className="pl-10"
               />
             </div>
-            <Button variant="outline" onClick={() => setShowFilters(!showFilters)} className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setShowFilters(!showFilters)}
+              className="flex items-center gap-2"
+            >
               <Filter className="h-4 w-4" />
               Filters
             </Button>
@@ -111,7 +142,10 @@ export default function BrowsePage() {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   <div className="space-y-2">
                     <Label>Category</Label>
-                    <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                    <Select
+                      value={selectedCategory}
+                      onValueChange={setSelectedCategory}
+                    >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
@@ -126,7 +160,10 @@ export default function BrowsePage() {
                   </div>
                   <div className="space-y-2">
                     <Label>Condition</Label>
-                    <Select value={selectedCondition} onValueChange={setSelectedCondition}>
+                    <Select
+                      value={selectedCondition}
+                      onValueChange={setSelectedCondition}
+                    >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
@@ -141,7 +178,10 @@ export default function BrowsePage() {
                   </div>
                   <div className="space-y-2">
                     <Label>Size</Label>
-                    <Select value={selectedSize} onValueChange={setSelectedSize}>
+                    <Select
+                      value={selectedSize}
+                      onValueChange={setSelectedSize}
+                    >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
@@ -163,8 +203,12 @@ export default function BrowsePage() {
                       <SelectContent>
                         <SelectItem value="newest">Newest First</SelectItem>
                         <SelectItem value="oldest">Oldest First</SelectItem>
-                        <SelectItem value="points-high">Points: High to Low</SelectItem>
-                        <SelectItem value="points-low">Points: Low to High</SelectItem>
+                        <SelectItem value="points-high">
+                          Points: High to Low
+                        </SelectItem>
+                        <SelectItem value="points-low">
+                          Points: Low to High
+                        </SelectItem>
                         <SelectItem value="title">Alphabetical</SelectItem>
                       </SelectContent>
                     </Select>
@@ -177,7 +221,9 @@ export default function BrowsePage() {
 
         {/* Results */}
         <div className="mb-4 flex items-center justify-between">
-          <p className="text-muted-foreground">{sortedItems.length} items found</p>
+          <p className="text-muted-foreground">
+            {sortedItems.length} items found
+          </p>
         </div>
 
         {isLoading ? (
@@ -198,7 +244,10 @@ export default function BrowsePage() {
         ) : sortedItems.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {sortedItems.map((item) => (
-              <Card key={item.id} className="group hover:shadow-lg transition-shadow">
+              <Card
+                key={item.id}
+                className="group hover:shadow-lg transition-shadow"
+              >
                 <CardContent className="p-0">
                   <div className="relative">
                     <img
@@ -207,15 +256,23 @@ export default function BrowsePage() {
                       className="w-full h-48 object-cover rounded-t-lg"
                     />
                     <div className="absolute top-2 right-2">
-                      <Button size="sm" variant="secondary" className="h-8 w-8 p-0">
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        className="h-8 w-8 p-0"
+                      >
                         <Heart className="h-4 w-4" />
                       </Button>
                     </div>
                   </div>
 
                   <div className="p-4">
-                    <h3 className="font-semibold mb-1 group-hover:text-primary transition-colors">{item.title}</h3>
-                    <p className="text-sm text-muted-foreground mb-2 line-clamp-2">{item.description}</p>
+                    <h3 className="font-semibold mb-1 group-hover:text-primary transition-colors">
+                      {item.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
+                      {item.description}
+                    </p>
 
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-2">
@@ -226,11 +283,15 @@ export default function BrowsePage() {
                           {item.condition}
                         </Badge>
                       </div>
-                      <div className="text-sm font-medium text-green-600">{item.pointsValue} pts</div>
+                      <div className="text-sm font-medium text-green-600">
+                        {item.pointsValue} pts
+                      </div>
                     </div>
 
                     <div className="flex items-center justify-between">
-                      <div className="text-xs text-muted-foreground">by {item.userName}</div>
+                      <div className="text-xs text-muted-foreground">
+                        by {item.userName}
+                      </div>
                       <Button size="sm" asChild>
                         <Link href={`/items/${item.id}`}>View Details</Link>
                       </Button>
@@ -251,5 +312,5 @@ export default function BrowsePage() {
         )}
       </div>
     </div>
-  )
+  );
 }

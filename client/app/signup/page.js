@@ -25,7 +25,6 @@ export default function SignupPage() {
     email: "",
     password: "",
     confirmPassword: "",
-    agreeToTerms: false,
   });
 
   const [loading, setLoading] = useState(false);
@@ -42,15 +41,6 @@ export default function SignupPage() {
         toast({
           title: "Password mismatch",
           description: "Please make sure your passwords match.",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      if (!formData.agreeToTerms) {
-        toast({
-          title: "Terms required",
-          description: "Please agree to the terms and conditions.",
           variant: "destructive",
         });
         return;

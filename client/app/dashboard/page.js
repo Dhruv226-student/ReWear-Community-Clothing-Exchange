@@ -35,7 +35,7 @@ export default function DashboardPage() {
     return (
       <div className="min-h-screen bg-background">
         <Header />
-        <div className="container py-8">
+        <div className="container py-8 mx-auto">
           <div className="animate-pulse space-y-8">
             <div className="h-8 bg-muted rounded w-1/3" />
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
