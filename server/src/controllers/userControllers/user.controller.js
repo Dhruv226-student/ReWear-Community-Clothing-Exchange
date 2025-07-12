@@ -17,10 +17,12 @@ module.exports = {
      * Get: Get user.
      */
     getUser: catchAsync(async (req, res) => {
+      const user = await userService.get({ _id: req.user._id }, 'role');
+
         res.status(httpStatus.OK).json({
             success: true,
             message: MESSAGE.get_user_successfully,
-            data: req.user,
+            data: user,
         });
     }),
 

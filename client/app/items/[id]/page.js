@@ -1,16 +1,16 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useAuth } from "@/contexts/AuthContext"
-import { useItem } from "@/hooks/useItems"
-import { useCreateSwapRequest } from "@/hooks/useSwaps"
-import { Header } from "@/components/layout/header"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
+import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useItem } from "@/hooks/useItems";
+import { useCreateSwapRequest } from "@/hooks/useSwaps";
+import { Header } from "@/components/layout/header";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import {
   Dialog,
   DialogContent,
@@ -18,20 +18,27 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Heart, Share2, Flag, Star, MessageCircle, ArrowLeft } from "lucide-react"
-import { useRouter } from "next/navigation"
-import { useToast } from "@/hooks/use-toast"
+} from "@/components/ui/dialog";
+import {
+  Heart,
+  Share2,
+  Flag,
+  Star,
+  MessageCircle,
+  ArrowLeft,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
 
 export default function ItemDetailPage({ params }) {
-  const [selectedImage, setSelectedImage] = useState(0)
-  const [swapMessage, setSwapMessage] = useState("")
-  const [showSwapDialog, setShowSwapDialog] = useState(false)
-  const { user, isAuthenticated } = useAuth()
-  const { data: item, isLoading, error } = useItem(params.id)
-  const createSwapMutation = useCreateSwapRequest()
-  const router = useRouter()
-  const { toast } = useToast()
+  const [selectedImage, setSelectedImage] = useState(0);
+  const [swapMessage, setSwapMessage] = useState("");
+  const [showSwapDialog, setShowSwapDialog] = useState(false);
+  const { user, isAuthenticated } = useAuth();
+  const { data: item, isLoading, error } = useItem(params.id);
+  const createSwapMutation = useCreateSwapRequest();
+  const router = useRouter();
+  const { toast } = useToast();
 
   const handleSwapRequest = async () => {
     if (!isAuthenticated) {
@@ -39,9 +46,9 @@ export default function ItemDetailPage({ params }) {
         title: "Login required",
         description: "Please log in to request a swap.",
         variant: "destructive",
-      })
-      router.push("/login")
-      return
+      });
+      router.push("/login");
+      return;
     }
 
     try {
@@ -49,24 +56,24 @@ export default function ItemDetailPage({ params }) {
         requesterId: user.id,
         ownerId: item.userId,
         itemId: item.id,
-        pointsOffered: item.pointsValue,
+        pointsOffered: item.exchange_points,
         message: swapMessage,
-      })
+      });
 
       toast({
         title: "Swap request sent!",
         description: "The owner will be notified of your request.",
-      })
-      setShowSwapDialog(false)
-      setSwapMessage("")
+      });
+      setShowSwapDialog(false);
+      setSwapMessage("");
     } catch (error) {
       toast({
         title: "Failed to send request",
         description: "Please try again later.",
         variant: "destructive",
-      })
+      });
     }
-  }
+  };
 
   const handleRedeemWithPoints = () => {
     if (!isAuthenticated) {
@@ -74,27 +81,28 @@ export default function ItemDetailPage({ params }) {
         title: "Login required",
         description: "Please log in to redeem with points.",
         variant: "destructive",
-      })
-      router.push("/login")
-      return
+      });
+      router.push("/login");
+      return;
     }
 
-    if (!user || user.points < item.pointsValue) {
+    if (!user || user.points < item.exchange_points) {
       toast({
         title: "Insufficient points",
-        description: `You need ${item.pointsValue} points to redeem this item.`,
+        description: `You need ${item.exchange_points} points to redeem this item.`,
         variant: "destructive",
-      })
-      return
+      });
+      return;
     }
 
     // Mock redemption
     toast({
       title: "Item redeemed!",
-      description: `You've successfully redeemed this item for ${item.pointsValue} points.`,
-    })
-  }
+      description: `You've successfully redeemed this item for ${item.exchange_points} points.`,
+    });
+  };
 
+  console.log({ item });
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
@@ -107,7 +115,10 @@ export default function ItemDetailPage({ params }) {
                 <div className="aspect-square bg-muted rounded-lg" />
                 <div className="grid grid-cols-3 gap-2">
                   {[...Array(3)].map((_, i) => (
-                    <div key={i} className="aspect-square bg-muted rounded-lg" />
+                    <div
+                      key={i}
+                      className="aspect-square bg-muted rounded-lg"
+                    />
                   ))}
                 </div>
               </div>
@@ -123,7 +134,7 @@ export default function ItemDetailPage({ params }) {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   if (error || !item) {
@@ -133,12 +144,14 @@ export default function ItemDetailPage({ params }) {
         <div className="container py-8">
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-4">Item not found</h1>
-            <p className="text-muted-foreground mb-4">The item you're looking for doesn't exist or has been removed.</p>
+            <p className="text-muted-foreground mb-4">
+              The item you're looking for doesn't exist or has been removed.
+            </p>
             <Button onClick={() => router.back()}>Go Back</Button>
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -155,18 +168,24 @@ export default function ItemDetailPage({ params }) {
           <div className="space-y-4">
             <div className="aspect-square rounded-lg overflow-hidden bg-muted">
               <img
-                src={item.images[selectedImage] || "/placeholder.svg"}
+                src={
+                  item?.images && item?.images[selectedImage]
+                    ? item?.images[selectedImage]
+                    : "/placeholder.svg"
+                }
                 alt={item.title}
                 className="w-full h-full object-cover"
               />
             </div>
             <div className="grid grid-cols-3 gap-2">
-              {item.images.map((image, index) => (
+              {item.images?.map((image, index) => (
                 <button
                   key={index}
                   onClick={() => setSelectedImage(index)}
                   className={`aspect-square rounded-lg overflow-hidden border-2 ${
-                    selectedImage === index ? "border-primary" : "border-transparent"
+                    selectedImage === index
+                      ? "border-primary"
+                      : "border-transparent"
                   }`}
                 >
                   <img
@@ -191,25 +210,16 @@ export default function ItemDetailPage({ params }) {
                     <Badge variant="outline">{item.condition}</Badge>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Button size="sm" variant="outline">
-                    <Heart className="h-4 w-4" />
-                  </Button>
-                  <Button size="sm" variant="outline">
-                    <Share2 className="h-4 w-4" />
-                  </Button>
-                  <Button size="sm" variant="outline">
-                    <Flag className="h-4 w-4" />
-                  </Button>
-                </div>
               </div>
 
-              <div className="text-2xl font-bold text-green-600 mb-4">{item.pointsValue} Points</div>
+              <div className="text-2xl font-bold text-green-600 mb-4">
+                {item.exchange_points} Points
+              </div>
 
               <p className="text-muted-foreground mb-4">{item.description}</p>
 
               <div className="flex flex-wrap gap-2 mb-6">
-                {item.tags.map((tag) => (
+                {item.tags?.map((tag) => (
                   <Badge key={tag} variant="secondary">
                     #{tag}
                   </Badge>
@@ -221,78 +231,85 @@ export default function ItemDetailPage({ params }) {
             <Card>
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
-                  <Avatar>
-                    <AvatarImage src={item.userAvatar || "/placeholder.svg"} alt={item.userName} />
-                    <AvatarFallback>{item.userName.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <h3 className="font-semibold">{item.userName}</h3>
-                    <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                      <Star className="h-3 w-3 fill-current text-yellow-500" />
-                      <span>4.8 (24 reviews)</span>
-                    </div>
-                  </div>
-                  <Button variant="outline" size="sm">
-                    <MessageCircle className="h-4 w-4 mr-2" />
-                    Message
-                  </Button>
+                  {item.owner?.first_name + " " + item.owner?.last_name}
                 </div>
               </CardContent>
             </Card>
 
             {/* Action Buttons */}
-            <div className="space-y-3">
-              <Dialog open={showSwapDialog} onOpenChange={setShowSwapDialog}>
-                <DialogTrigger asChild>
-                  <Button size="lg" className="w-full" disabled={createSwapMutation.isPending}>
-                    {createSwapMutation.isPending ? "Sending Request..." : "Request Swap"}
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Request a Swap</DialogTitle>
-                    <DialogDescription>
-                      Send a message to {item.userName} about swapping for this item.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="message">Message (optional)</Label>
-                      <Textarea
-                        id="message"
-                        placeholder="Tell them why you're interested in this item..."
-                        value={swapMessage}
-                        onChange={(e) => setSwapMessage(e.target.value)}
-                        rows={3}
-                      />
+            {item.owner?._id != user?._id && (
+              <div className="space-y-3">
+                <Dialog open={showSwapDialog} onOpenChange={setShowSwapDialog}>
+                  <DialogTrigger asChild>
+                    <Button
+                      size="lg"
+                      className="w-full"
+                      disabled={createSwapMutation.isPending}
+                    >
+                      {createSwapMutation.isPending
+                        ? "Sending Request..."
+                        : "Request Swap"}
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Request a Swap</DialogTitle>
+                      <DialogDescription>
+                        Send a message to {item.userName} about swapping for
+                        this item.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="message">Message (optional)</Label>
+                        <Textarea
+                          id="message"
+                          placeholder="Tell them why you're interested in this item..."
+                          value={swapMessage}
+                          onChange={(e) => setSwapMessage(e.target.value)}
+                          rows={3}
+                        />
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          onClick={handleSwapRequest}
+                          className="flex-1"
+                          disabled={createSwapMutation.isPending}
+                        >
+                          {createSwapMutation.isPending
+                            ? "Sending..."
+                            : "Send Request"}
+                        </Button>
+                        <Button
+                          variant="outline"
+                          onClick={() => setShowSwapDialog(false)}
+                        >
+                          Cancel
+                        </Button>
+                      </div>
                     </div>
-                    <div className="flex gap-2">
-                      <Button onClick={handleSwapRequest} className="flex-1" disabled={createSwapMutation.isPending}>
-                        {createSwapMutation.isPending ? "Sending..." : "Send Request"}
-                      </Button>
-                      <Button variant="outline" onClick={() => setShowSwapDialog(false)}>
-                        Cancel
-                      </Button>
-                    </div>
-                  </div>
-                </DialogContent>
-              </Dialog>
+                  </DialogContent>
+                </Dialog>
 
-              <Button
-                size="lg"
-                variant="outline"
-                className="w-full bg-transparent"
-                onClick={handleRedeemWithPoints}
-                disabled={!isAuthenticated || (user && user.points < item.pointsValue)}
-              >
-                Redeem with Points ({item.pointsValue} pts)
-                {user && user.points < item.pointsValue && (
-                  <span className="ml-2 text-xs text-muted-foreground">
-                    (Need {item.pointsValue - user.points} more)
-                  </span>
-                )}
-              </Button>
-            </div>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="w-full bg-transparent"
+                  onClick={handleRedeemWithPoints}
+                  disabled={
+                    !isAuthenticated ||
+                    (user && user.points < item.exchange_points)
+                  }
+                >
+                  Redeem with Points ({item.exchange_points} pts)
+                  {user && user.points < item.exchange_points && (
+                    <span className="ml-2 text-xs text-muted-foreground">
+                      (Need {item.exchange_points - user.points} more)
+                    </span>
+                  )}
+                </Button>
+              </div>
+            )}
 
             {/* Item Stats */}
             <Card>
@@ -326,5 +343,5 @@ export default function ItemDetailPage({ params }) {
         </div>
       </div>
     </div>
-  )
+  );
 }

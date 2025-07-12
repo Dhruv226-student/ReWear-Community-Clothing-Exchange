@@ -3,7 +3,7 @@ module.exports = {
         public: 'public',
         default: 'default',
         userImages: 'userImages',
-        productImages: 'productImages',
+        clothImages: 'clothImages',
     },
 
     ROLES: {
@@ -31,4 +31,78 @@ module.exports = {
         large: { type: 'large', size: [888, 595] },
         small: { type: 'small', size: [84, 48] },
     },
+
+    ITEM: {
+        STATUS: {
+            pending: 'Pending',
+            approved: 'Approved',
+            rejected: 'Rejected',
+            swapped:'Swapped'
+        },
+        CONDITION: {
+            New: 'New',
+            Used: 'Used',
+        },
+        SIZE: {
+            xs: 'XS',
+            s: 'S',
+            m: 'M',
+            l: 'L',
+            xl: 'XL',
+            xxl: 'XXL',
+            xxxl: 'XXXL',
+        },
+        CATEGORY: {
+            shirt: 'Shirt',
+            t_shirt: 'T-Shirt',
+            dress: 'Dress',
+            jeans: 'Jeans',
+            skirt: 'Skirt',
+            jacket: 'Jacket',
+            hoodie: 'Hoodie',
+            sweater: 'Sweater',
+            shorts: 'Shorts',
+            blazer: 'Blazer',
+            suit: 'Suit',
+            kurta: 'Kurta',
+            saree: 'Saree',
+            leggings: 'Leggings',
+            others: 'Others',
+        },
+        TYPE: {
+            casual: 'Casual',
+            formal: 'Formal',
+            party: 'Party',
+            traditional: 'Traditional',
+            sportswear: 'Sportswear',
+            business: 'Business',
+            loungewear: 'Loungewear',
+        },
+        TAGS: {
+            summer: 'summer',
+            winter: 'winter',
+            cotton: 'cotton',
+            denim: 'denim',
+            wool: 'wool',
+            formal: 'formal',
+            casual: 'casual',
+            vintage: 'vintage',
+            branded: 'branded',
+            handmade: 'handmade',
+            eco_friendly: 'eco-friendly',
+        },
+    },
+
+    SWAP:{
+        STATUS:{
+            pending:'Pending',
+            accepted:'Accepted',
+            rejected:'Rejected',
+            cancelled:'Cancelled'
+        },
+        TYPE:{
+            redeem: 'Redeem',
+            swap: 'Swap'
+        }
+    }
 };

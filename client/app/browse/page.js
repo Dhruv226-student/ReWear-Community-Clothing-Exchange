@@ -1,47 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { useItems } from "@/hooks/useItems";
+import { useFeaturedItems, useItems } from "@/hooks/useItems";
 import { Header } from "@/components/layout/header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Label } from "@/components/ui/label";
-import { Search, Filter, Heart } from "lucide-react";
+import { Search } from "lucide-react";
 import Link from "next/link";
-
-const categories = [
-  "All",
-  "Tops",
-  "Bottoms",
-  "Dresses",
-  "Outerwear",
-  "Shoes",
-  "Accessories",
-  "Formal",
-];
-const conditions = ["All", "Like New", "Excellent", "Good", "Fair"];
-const sizes = ["All", "XS", "S", "M", "L", "XL", "XXL"];
 
 export default function BrowsePage() {
   const [searchTerm, setSearchTerm] = useState("");
 
-  const {
-    data: items = [],
-    isLoading,
-    error,
-  } = useItems({
-    search: searchTerm,
-  });
-
+  const { data: items = [], isLoading, error } = useFeaturedItems();
 
   if (error) {
     return (
@@ -69,27 +42,9 @@ export default function BrowsePage() {
           </p>
         </div>
 
-        {/* Search and Filters */}
-        <div className="space-y-4 mb-8">
-          <div className="flex gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search items, brands, or tags..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-          </div>
-
-        </div>
-
         {/* Results */}
         <div className="mb-4 flex items-center justify-between">
-          <p className="text-muted-foreground">
-            {items.length} items found
-          </p>
+          <p className="text-muted-foreground">{items.length} items found</p>
         </div>
 
         {isLoading ? (
@@ -121,7 +76,7 @@ export default function BrowsePage() {
                       alt={item.title}
                       className="w-full h-48 object-cover rounded-t-lg"
                     />
-                    </div>
+                  </div>
 
                   <div className="p-4">
                     <h3 className="font-semibold mb-1 group-hover:text-primary transition-colors">
