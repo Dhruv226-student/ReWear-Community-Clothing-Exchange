@@ -69,7 +69,16 @@ const getAllItems = catchAsync(async (req, res) => {
 
 /** Get details */
 const getDetails = catchAsync(async (req, res) => {
-    const item = await itemService.getItemDtl({ _id: req.params.itemId });
+    const item = await itemService.getItemDtl(
+        { _id: req.params.itemId },
+        {},
+        {
+            populate: {
+                path: 'owner',
+                select: ['first_name', 'last_name'],
+            },
+        }
+    );
     if (!item) {
         throw new ApiError(404, 'Item not found');
     }
