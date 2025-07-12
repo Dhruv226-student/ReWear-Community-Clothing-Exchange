@@ -23,8 +23,9 @@ export default function DashboardPage() {
   const {
     data: swapsData = { incoming: [], outgoing: [] },
     isLoading: swapsLoading,
-  } = useUserSwaps(user?.id);
+  } = useUserSwaps();
 
+  console.log(swapsData , "swapsData.....")
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
       router.push("/login");
@@ -72,22 +73,16 @@ export default function DashboardPage() {
       value: 12,
       icon: ArrowUpDown,
       color: "text-purple-600",
-    },
-    {
-      title: "Profile Views",
-      value: 48,
-      icon: TrendingUp,
-      color: "text-orange-600",
-    },
+    }
   ];
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <div className="container py-8">
+      <div className="container py-8">  
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">
-            Welcome back, {user.name}!
+            Welcome back, {user.first_name}!
           </h1>
           <p className="text-muted-foreground">
             Manage your items, track swaps, and discover new pieces for your
@@ -96,7 +91,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {stats.map((stat, index) => (
             <Card key={index}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

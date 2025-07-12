@@ -33,11 +33,6 @@ const sizes = ["All", "XS", "S", "M", "L", "XL", "XXL"];
 
 export default function BrowsePage() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All");
-  const [selectedCondition, setSelectedCondition] = useState("All");
-  const [selectedSize, setSelectedSize] = useState("All");
-  const [sortBy, setSortBy] = useState("newest");
-  const [showFilters, setShowFilters] = useState(false);
 
   const {
     data: items = [],
@@ -45,48 +40,8 @@ export default function BrowsePage() {
     error,
   } = useItems({
     search: searchTerm,
-    category: selectedCategory,
-    condition: selectedCondition,
-    size: selectedSize,
-    sort: sortBy,
   });
 
-  const filteredItems = items.filter((item) => {
-    const matchesSearch =
-      item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.tags.some((tag) =>
-        tag.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    const matchesCategory =
-      selectedCategory === "All" || item.category === selectedCategory;
-    const matchesCondition =
-      selectedCondition === "All" || item.condition === selectedCondition;
-    const matchesSize = selectedSize === "All" || item.size === selectedSize;
-
-    return matchesSearch && matchesCategory && matchesCondition && matchesSize;
-  });
-
-  const sortedItems = [...filteredItems].sort((a, b) => {
-    switch (sortBy) {
-      case "newest":
-        return (
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
-      case "oldest":
-        return (
-          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-        );
-      case "points-high":
-        return b.pointsValue - a.pointsValue;
-      case "points-low":
-        return a.pointsValue - b.pointsValue;
-      case "title":
-        return a.title.localeCompare(b.title);
-      default:
-        return 0;
-    }
-  });
 
   if (error) {
     return (
@@ -126,103 +81,14 @@ export default function BrowsePage() {
                 className="pl-10"
               />
             </div>
-            <Button
-              variant="outline"
-              onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center gap-2"
-            >
-              <Filter className="h-4 w-4" />
-              Filters
-            </Button>
           </div>
 
-          {showFilters && (
-            <Card>
-              <CardContent className="p-6">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <div className="space-y-2">
-                    <Label>Category</Label>
-                    <Select
-                      value={selectedCategory}
-                      onValueChange={setSelectedCategory}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {categories.map((category) => (
-                          <SelectItem key={category} value={category}>
-                            {category}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Condition</Label>
-                    <Select
-                      value={selectedCondition}
-                      onValueChange={setSelectedCondition}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {conditions.map((condition) => (
-                          <SelectItem key={condition} value={condition}>
-                            {condition}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Size</Label>
-                    <Select
-                      value={selectedSize}
-                      onValueChange={setSelectedSize}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {sizes.map((size) => (
-                          <SelectItem key={size} value={size}>
-                            {size}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Sort By</Label>
-                    <Select value={sortBy} onValueChange={setSortBy}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="newest">Newest First</SelectItem>
-                        <SelectItem value="oldest">Oldest First</SelectItem>
-                        <SelectItem value="points-high">
-                          Points: High to Low
-                        </SelectItem>
-                        <SelectItem value="points-low">
-                          Points: Low to High
-                        </SelectItem>
-                        <SelectItem value="title">Alphabetical</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
         </div>
 
         {/* Results */}
         <div className="mb-4 flex items-center justify-between">
           <p className="text-muted-foreground">
-            {sortedItems.length} items found
+            {items.length} items found
           </p>
         </div>
 
@@ -241,9 +107,9 @@ export default function BrowsePage() {
               </Card>
             ))}
           </div>
-        ) : sortedItems.length > 0 ? (
+        ) : items.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {sortedItems.map((item) => (
+            {items.map((item) => (
               <Card
                 key={item.id}
                 className="group hover:shadow-lg transition-shadow"
@@ -255,16 +121,7 @@ export default function BrowsePage() {
                       alt={item.title}
                       className="w-full h-48 object-cover rounded-t-lg"
                     />
-                    <div className="absolute top-2 right-2">
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        className="h-8 w-8 p-0"
-                      >
-                        <Heart className="h-4 w-4" />
-                      </Button>
                     </div>
-                  </div>
 
                   <div className="p-4">
                     <h3 className="font-semibold mb-1 group-hover:text-primary transition-colors">

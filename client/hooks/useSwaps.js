@@ -1,11 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { api } from "@/lib/api"
+import { fetchUserSwaps } from '../services/api/user'
 
-export function useUserSwaps(userId) {
+export function useUserSwaps() {
   return useQuery({
-    queryKey: ["swaps", "user", userId],
-    queryFn: () => api.getUserSwaps(userId),
-    enabled: !!userId,
+    queryKey: ["swaps"],
+    queryFn: () => fetchUserSwaps,
   })
 }
 

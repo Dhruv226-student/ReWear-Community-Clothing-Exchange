@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }) => {
     isLoading: isUserLoading,
     isFetched,
     isError,
-  } = useUser()
+  } = useUser(isAuthenticated)
 
 
   console.log(currentUser , "currentUser....")
@@ -66,8 +66,8 @@ export const AuthProvider = ({ children }) => {
       if (data.success) {
         // Store tokens
         localStorage.setItem("access_token", data.data.tokens.access.token);
-        localStorage.setItem("refresh_token", data.data.tokens.refresh.token);
-
+        localStorage.setItem("refresh_token", data.data.tokens.refresh.token);       
+        localStorage.setItem("rewear_user", JSON.stringify(data.data.user))
         // Update state
         setUser(data.data.user);
         setIsAuthenticated(true);
@@ -125,6 +125,7 @@ export const AuthProvider = ({ children }) => {
           "refreshToken",
           response.data.tokens.refresh.token
         );
+        localStorage.setItem("rewear_user", JSON.stringify(data.data.user))
 
         // Set user data
         setUser(response.data.user);

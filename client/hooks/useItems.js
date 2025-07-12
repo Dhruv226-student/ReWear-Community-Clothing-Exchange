@@ -1,10 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { api } from "@/lib/api"
+import { fetchItemsList } from '../services/api/items'
 
 export function useItems(filters = {}) {
   return useQuery({
     queryKey: ["items", filters],
-    queryFn: () => api.getItems(filters),
+    queryFn: fetchItemsList,
   })
 }
 

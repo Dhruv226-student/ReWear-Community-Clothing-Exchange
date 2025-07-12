@@ -69,11 +69,6 @@ export function FeaturedItems() {
                     alt={item.title}
                     className="w-full h-48 object-cover rounded-t-lg"
                   />
-                  <div className="absolute top-2 right-2">
-                    <Button size="sm" variant="secondary" className="h-8 w-8 p-0">
-                      <Heart className="h-4 w-4" />
-                    </Button>
-                  </div>
                   <div className="absolute top-2 left-2">
                     <Badge variant="secondary" className="bg-green-100 text-green-800">
                       <Star className="h-3 w-3 mr-1" />

@@ -1,10 +1,12 @@
 import { useQuery } from "@tanstack/react-query"
 import { api } from "@/lib/api"
+import { fetchPendingItems , fetchUserList } from '../services/api/admin'
 
 export function usePendingItems() {
   return useQuery({
     queryKey: ["admin", "pending-items"],
-    queryFn: api.getPendingItems,
+    queryFn: fetchPendingItems,
+    retry:3
   })
 }
 
@@ -18,6 +20,6 @@ export function useReportedItems() {
 export function useUsers() {
   return useQuery({
     queryKey: ["admin", "users"],
-    queryFn: api.getUsers,
+    queryFn: fetchUserList,
   })
 }
