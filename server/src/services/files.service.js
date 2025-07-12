@@ -76,7 +76,7 @@ const sharpResize = (fromFile, toFile, size) => {
  * @param {Object} [filePayload.file] - File data.
  * @param {Object} [filePayload.file.originalname] - File original name.
  * @param {Object} [filePayload.file.buffer] - File buffer.
- * @returns {Promise<QueryResult>}
+ * @returns {Promise<{ name: string, path: string }>}
  */
 exports.saveFile = (filePayload) => {
     try {
