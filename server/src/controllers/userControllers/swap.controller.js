@@ -14,9 +14,8 @@ const { handlePointSwap } = require('../../helper/function.helper');
 exports.createSwapRequest = catchAsync(async (req, res) => {
   const { requesterItem, responderItem, type } = req.body;
   const requester = req.user;
-console.log('============req.user_id==========>', req.user);
   // Get responder's item 
-  const responseItem = await itemService.getItemDtl({ _id: responderItem, status: ITEM.STATUS.available });
+  const responseItem = await itemService.getItemDtl({ _id: responderItem, status: ITEM.STATUS.approved });
   if (!responseItem) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Responder item not found or not available.');
   }
@@ -32,7 +31,7 @@ console.log('============req.user_id==========>', req.user);
     requestItem = await itemService.getItemDtl({
       _id: requesterItem,
       owner: requester._id,
-      status: ITEM.STATUS.available,
+      status: ITEM.STATUS.approved,
     });
 
     if (!requestItem) {

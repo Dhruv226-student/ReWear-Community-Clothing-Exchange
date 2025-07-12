@@ -43,7 +43,7 @@ module.exports = {
   login: catchAsync(async (req, res) => {
     const { body } = req;
 
-    const user = await userService.get({ email: body.email, deleted_at: null });
+    const user = await userService.get({ email: body.email, deleted_at: null },'role');
 
     if (!user) {
         throw new ApiError(httpStatus.NOT_FOUND, MESSAGE.email_not_found);
