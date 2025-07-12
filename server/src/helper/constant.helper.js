@@ -37,6 +37,7 @@ module.exports = {
             pending: 'Pending',
             approved: 'Approved',
             rejected: 'Rejected',
+            swapped:'Swapped'
         },
         CONDITION: {
             New: 'New',
@@ -91,4 +92,17 @@ module.exports = {
             eco_friendly: 'eco-friendly',
         },
     },
+
+    SWAP:{
+        STATUS:{
+            pending:'Pending',
+            accepted:'Accepted',
+            rejected:'Rejected',
+            cancelled:'Cancelled'
+        },
+        TYPE:{
+            redeem: 'Redeem',
+            swap: 'Swap'
+        }
+    }
 };

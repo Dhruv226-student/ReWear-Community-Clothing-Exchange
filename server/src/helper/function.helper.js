@@ -2,6 +2,7 @@ const fs = require('fs');
 
 const validationFile = require('../config/validation.json');
 const attributesFile = require('../config/attributes.json');
+    const PointTransaction = require('../models/pointTransaction.model');
 
 module.exports = {
     /************************************ Generate response/error message function ****************************************************/
@@ -123,4 +124,30 @@ module.exports = {
             .replace(/ /g, '-')
             .replace(/[^\w-]+/g, '');
     },
+
+
+  /**
+   * Handle point-based swap: debit requester, credit responder
+   */
+  handlePointSwap: async ({ requesterId, responderId, points, swapId }) => {
+    if (!requesterId || !responderId || !points || !swapId) {
+      throw new Error('Missing required data for point transaction.');
+    }
+
+    await PointTransaction.create({
+      user: requesterId,
+      type: 'debit',
+      points,
+      description: 'Swap request using points',
+      relatedSwap: swapId,
+    });
+
+    await PointTransaction.create({
+      user: responderId,
+      type: 'credit',
+      points,
+      description: 'Received points from swap',
+      relatedSwap: swapId,
+    });
+  }
 };

@@ -78,6 +78,10 @@ const userSchema = new mongoose.Schema(
             type: Date,
             default: null,
         },
+        points:{
+            type: Number,
+            default: 20,
+        }
     },
     {
         timestamps: true,

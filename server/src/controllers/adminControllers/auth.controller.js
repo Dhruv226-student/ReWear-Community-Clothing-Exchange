@@ -26,7 +26,7 @@ module.exports = {
             email: body.email,
             role: adminRoleId,
             deleted_at: null,
-        }); // Get admin by email.
+        },'role'); // Get admin by email.
         if (!emailExist) {
             throw new ApiError(httpStatus.NOT_FOUND, MESSAGE.email_not_found); // If email doesn't exist, throw an error.
         }
