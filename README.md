@@ -6,16 +6,16 @@
 
 ## 👨‍💻 Team Members
 
-1. **Jaimin Vaddoriya** – Frontend Developer  
+1. **Jaimin Vaddoriya**
    📧 jaiminvaddoriya194@gmail.com
 
-2. **Jay Rathod** – Backend Developer  
+2. **Jay Rathod** 
    📧 rathodjay0026@gmail.com
 
-3. **Darshan Tarpada** – UI/UX Designer  
+3. **Darshan Tarpada** 
    📧 darshantarpada66@gmail.com
 
-4. **Dhruv Patel** – Database & Logic  
+4. **Dhruv Patel**  
    📧 pateldhruv5536@gmail.com
 
 ---
