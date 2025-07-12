@@ -7,6 +7,22 @@ const { ROLES } = require('../../../helper/constant.helper');
 
 const router = express.Router();
 
+/** Get List */
+router.get(
+    '/list',
+    auth(ROLES.admin),
+    validate(itemValidation.getList),
+    itemController.getAllItems
+);
+
+/** Get Details */
+router.get(
+    '/details/:itemId',
+    auth(ROLES.admin),
+    validate(itemValidation.getDetails),
+    itemController.getDetails
+);
+
 /** Update */
 router.put(
     '/manage-status/:itemId',
