@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { ITEM } = require('../helper/constant.helper');
+const { paginate } = require('./plugins');
 
 const itemSchema = new mongoose.Schema(
     {
@@ -24,5 +25,7 @@ const itemSchema = new mongoose.Schema(
         versionKey: false,
     }
 );
+
+itemSchema.plugin(paginate);
 
 module.exports = mongoose.model('Item', itemSchema);

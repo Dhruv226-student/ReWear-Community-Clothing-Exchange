@@ -2,7 +2,7 @@ const ApiError = require('../../utils/apiError');
 const catchAsync = require('../../utils/catchAsync');
 const itemService = require('../../services/item.service');
 const fileService = require('../../services/files.service');
-const { FILES_FOLDER } = require('../../helper/constant.helper');
+const { FILES_FOLDER, ITEM } = require('../../helper/constant.helper');
 
 /** Create */
 const createItem = catchAsync(async (req, res) => {
@@ -13,6 +13,7 @@ const createItem = catchAsync(async (req, res) => {
     } = req;
 
     body.owner = user._id;
+    body.status = ITEM.STATUS.pending;
 
     let resMsg = 'Item created successfully';
 
@@ -57,28 +58,42 @@ const createItem = catchAsync(async (req, res) => {
 
 /** Get list */
 const getAllItems = catchAsync(async (req, res) => {
-    // Implement your logic here
+    const { user } = req;
+    return res.status(200).json({
+        success: true,
+        data: await itemService.getAllItems({ owner: user._id }),
+    });
 });
 
 /** Get details */
 const getDetails = catchAsync(async (req, res) => {
-    // Implement your logic here
-});
-
-/** Update */
-const updateItem = catchAsync(async (req, res) => {
-    // Implement your logic here
+    return res.status(200).json({
+        success: true,
+        data: await itemService.getItemDtl({ _id: req.params.itemId }),
+    });
 });
 
 /** Delete */
 const deleteItem = catchAsync(async (req, res) => {
-    // Implement your logic here
+    const { params } = req;
+
+    const deleteItem = await itemService.deleteItem({ _id: params.itemId });
+    if (!deleteItem) {
+        throw new ApiError(404, 'Item not found');
+    }
+
+    // Delete files
+    fileService.deleteFiles(deleteItem.remove_images);
+
+    return res.status(200).json({
+        success: true,
+        data: deleteItem,
+    });
 });
 
 module.exports = {
     createItem,
     getAllItems,
     getDetails,
-    updateItem,
     deleteItem,
 };
