@@ -30,18 +30,20 @@ const createItem = catchAsync(async (req, res) => {
     }
 
     if (remove_images?.length) {
-        fileService.deleteFiles(remove_images);
+        fileService.deleteFiles(
+            remove_images.map((image) => `./${FILES_FOLDER.clothImages}/${image}`)
+        );
 
         body.images = item.images.filter((image) => !remove_images.includes(image));
     }
 
     if (files.length) {
-        const { path } = await fileService.saveFile({
+        const { name } = await fileService.saveFile({
             file: files,
             folderName: FILES_FOLDER.clothImages,
         });
 
-        body.images = remove_images?.length ? [...body.images, ...path] : [...item.images, ...path];
+        body.images = remove_images?.length ? [...body.images, ...name] : [...item.images, ...name];
     }
 
     Object.assign(item, body);
@@ -83,7 +85,9 @@ const deleteItem = catchAsync(async (req, res) => {
     }
 
     // Delete files
-    fileService.deleteFiles(deleteItem.remove_images);
+    fileService.deleteFiles(
+        deleteItem.items.map((image) => `./${FILES_FOLDER.clothImages}/${image}`)
+    );
 
     return res.status(200).json({
         success: true,
