@@ -42,16 +42,20 @@ const getList = {
 /** Get details */
 const getDetails = {
     params: Joi.object().keys({
-        id: Joi.string().trim().custom(objectId).required(),
+        itemId: Joi.string().trim().custom(objectId).required(),
     }),
 };
 
 /** Update */
 const updateItem = {
     params: Joi.object().keys({
-        id: Joi.string().trim().custom(objectId).required(),
+        itemId: Joi.string().trim().custom(objectId).required(),
     }),
-    body: Joi.object().keys({}),
+    body: Joi.object().keys({
+        status: Joi.string()
+            .valid(...Object.values(ITEM.STATUS))
+            .required(),
+    }),
 };
 
 module.exports = {

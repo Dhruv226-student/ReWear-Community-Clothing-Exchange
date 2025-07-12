@@ -30,6 +30,16 @@ exports.getAllItems = async (filter, projection = {}, options = {}) => {
 };
 
 /**
+ * Get item list with pagination
+ * @param {Object} filter
+ * @param {Object} options
+ * @returns {Promise<Item>}
+ */
+exports.getAllItemsWithPagination = async (filter, options = {}) => {
+    return Item.paginate(filter, options);
+};
+
+/**
  * Get details
  * @param {Object} filter
  * @param {Object} projection
@@ -49,4 +59,14 @@ exports.getItemDtl = async (filter, projection = {}, options = {}) => {
  */
 exports.updateItem = async (filter, update, options = {}) => {
     return Item.findOneAndUpdate(filter, update, options);
+};
+
+/**
+ * Delete
+ * @param {Object} filter
+ * @param {import('mongoose').QueryOptions} options
+ * @returns {Promise<Item>}
+ */
+exports.deleteItem = async (filter, options = {}) => {
+    return Item.findOneAndDelete(filter, options);
 };
