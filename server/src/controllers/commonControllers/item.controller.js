@@ -52,7 +52,6 @@ const getDetails = catchAsync(async (req, res) => {
         data: item,
     });
 });
-
 module.exports = {
     getAllItems,
     getDetails,
