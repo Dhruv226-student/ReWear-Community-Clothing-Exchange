@@ -13,11 +13,6 @@ const router = express.Router();
 router.post('/register', validate(authValidation.register), authController.register);
 
 /**
- * Verify OTP.
- */
-router.post('/verify-otp', validate(authValidation.verifyOtp), authController.verifyOtp);
-
-/**
  * Login.
  */
 router.post('/login', validate(authValidation.login), authController.login);

@@ -12,162 +12,60 @@ module.exports = {
     /**
      * POST: Register.
      */
-    register: catchAsync(async (req, res) => {
-        const { body } = req;
-        // const emailExist = await userService.getUserByEmail(body.email); // Get user by email.
-        const userRoleId = await roleService.getRoleByName(ROLES.user); // Get user role ID.
-        const emailExist = await userService.get({ email: body.email, deleted_at: null }); // Get user by email.
-        if (emailExist) {
-            throw new ApiError(httpStatus.BAD_REQUEST, MESSAGE.email_already_taken); // If email already exist, throw an error.
-        }
+  register: catchAsync(async (req, res) => {
+    const { body } = req;
 
-        const user = await userService.create({ ...body, role: userRoleId._id }); // User create.
+    const userRoleId = await roleService.getRoleByName(ROLES.user);
 
-        const otp = await tokenService.generateOtpToken(user); // Generate OTP.
+    const emailExist = await userService.get({ email: body.email, deleted_at: null });
+    if (emailExist) {
+        throw new ApiError(httpStatus.BAD_REQUEST, MESSAGE.email_already_taken);
+    }
 
-        /* ------------------------------ // old method ----------------------------- */
-        // const mailSent = await emailService.sendVerifyEmail({ ...body, otp, subject: 'Register!' }); // Send mail on requested email by users.
+    const user = await userService.create({
+        ...body,
+        role: userRoleId._id,
+        is_email_verified: true, // Directly mark as verified
+    });
 
-        /* ------------------------------ // new method ----------------------------- */
-        const mailSent = await emailService.sendTemplateEmail({
-            to: body.email,
-            subject: 'Register!',
-            template: 'otpEmailTemplate', // ✅ Dynamic template name
-            data: {
-                ...body,
-                otp,
-            },
-        });
+    const tokens = await tokenService.generateAuthTokens(user);
 
-        if (!mailSent) {
-            await userService.delete(user._id); // Delete user.
-
-            // await tokenService.deleteToken(user._id); // Delete token.
-            await tokenService.deleteOne({ user: user._id }); // Delete token.
-
-            throw new ApiError(httpStatus.BAD_REQUEST, MESSAGE.something_went_wrong); // If mail doesn't send, throw an error.
-        }
-
-        res.status(httpStatus.CREATED).json({
-            success: true,
-            message: MESSAGE.otp_sent,
-        });
-    }),
-
-    /**
-     * POST: Verify OTP.
-     */
-    verifyOtp: catchAsync(async (req, res) => {
-        const { email, otp } = req.body;
-
-        // let emailExist = await userService.getUserByEmail(email); // Get user by email.
-        let emailExist = await userService.get({ email, deleted_at: null }); // Get user by email.
-
-        if (!emailExist) {
-            throw new ApiError(httpStatus.NOT_FOUND, MESSAGE.email_not_found); // If email doesn't exist, throw an error.
-        }
-
-        if (emailExist.is_block) {
-            throw new ApiError(httpStatus.UNAUTHORIZED, MESSAGE.account_blocked); // If the user is blocked, throw an error.
-        }
-
-        // let token = await tokenService.getToken({
-        //     type: TOKEN_TYPES.verifyOtp,
-        //     user: emailExist._id,
-        // });
-        let token = await tokenService.get({
-            type: TOKEN_TYPES.verifyOtp,
-            user: emailExist._id,
-        });
-
-        if (!token) {
-            throw new ApiError(httpStatus.BAD_REQUEST, MESSAGE.something_went_wrong); // If token doesn't exist, throw an error.
-        }
-
-        if (token.token !== otp) {
-            throw new ApiError(httpStatus.BAD_REQUEST, MESSAGE.otp_invalid); // If otp doesn't match, throw an error.
-        }
-
-        if (token.expires <= new Date()) {
-            throw new ApiError(httpStatus.BAD_REQUEST, MESSAGE.otp_expired); // If otp expired, throw an error.
-        }
-
-        if (!emailExist.is_email_verified) {
-            emailExist = await userService.update(
-                { _id: emailExist._id },
-                { $set: { is_email_verified: true } },
-                { new: true }
-            ); // If user isEmailVerified is false, Update (isEmailVerified: true) user by _id.
-        }
-
-        const tokens = await tokenService.generateAuthTokens(emailExist); // Generate auth token.
-
-        res.status(httpStatus.OK).json({
-            success: true,
-            message: MESSAGE.otp_verified,
-            data: { user: emailExist, tokens },
-        });
-    }),
+    res.status(httpStatus.CREATED).json({
+        success: true,
+        message: MESSAGE.register_successfully,
+        data: { user, tokens },
+    });
+}),
 
     /**
      * POST: Login.
      */
-    login: catchAsync(async (req, res) => {
-        const { body } = req;
+  login: catchAsync(async (req, res) => {
+    const { body } = req;
 
-        let resMessage,
-            data = {};
+    const user = await userService.get({ email: body.email, deleted_at: null });
 
-        // let emailExist = await userService.getUserByEmail(body.email); // Get user by email.
-        let emailExist = await userService.get({ email: body.email, deleted_at: null }); // Get user by email.
+    if (!user) {
+        throw new ApiError(httpStatus.NOT_FOUND, MESSAGE.email_not_found);
+    }
 
-        if (!emailExist) {
-            throw new ApiError(httpStatus.NOT_FOUND, MESSAGE.email_not_found); // If email doesn't exist, throw an error.
-        }
+    if (user.is_block) {
+        throw new ApiError(httpStatus.UNAUTHORIZED, MESSAGE.account_blocked);
+    }
 
-        if (emailExist.isBlock) {
-            throw new ApiError(httpStatus.UNAUTHORIZED, MESSAGE.account_blocked); // If the user is blocked, throw an error.
-        }
+    if (!user.password || !(await user.isPasswordMatch(body.password))) {
+        throw new ApiError(httpStatus.UNAUTHORIZED, MESSAGE.password_is_wrong);
+    }
 
-        if (!emailExist.is_email_verified) {
-            const otp = await tokenService.generateOtpToken(emailExist); // Generate OTP.
+    const tokens = await tokenService.generateAuthTokens(user);
 
-            /* ------------------------------- // OLD CODE ------------------------------ */
-            // const mailSent = await emailService.sendVerifyEmail({
-            //     ...body,
-            //     otp,
-            //     subject: 'Login!',
-            // }); // Send mail on requested email by users.
+    res.status(httpStatus.OK).json({
+        success: true,
+        message: MESSAGE.login_successfully,
+        data: { user, tokens },
+    });
+}),
 
-            /* -------------------------------- NEW CODE -------------------------------- */
-            const mailSent = await emailService.sendTemplateEmail({
-                to: body.email,
-                subject: 'Login!',
-                template: 'otpEmailTemplate', // Use the relevant EJS template
-                data: {
-                    ...body,
-                    otp,
-                },
-            });
-
-            if (!mailSent) {
-                throw new ApiError(httpStatus.BAD_REQUEST, MESSAGE.something_went_wrong); // If mail doesn't send, throw an error.
-            }
-
-            resMessage = MESSAGE.otp_sent_email;
-        } else {
-            if (!emailExist.password || !(await emailExist.isPasswordMatch(body.password))) {
-                throw new ApiError(httpStatus.UNAUTHORIZED, MESSAGE.password_is_wrong); // If password doesn't match the user's password, throw an error.
-            }
-
-            data.user = emailExist;
-            data.tokens = await tokenService.generateAuthTokens(emailExist); // Generate auth token.
-
-            resMessage = MESSAGE.login_successfully;
-        }
-
-        res.status(httpStatus.OK).json({ success: true, message: resMessage, data });
-    }),
 
     /**
      * POST: Logout.
@@ -250,21 +148,6 @@ module.exports = {
         // let user = await userService.getUserByEmail(body.email); // Get user by email.
         const userRole = await roleService.getRoleByName(ROLES.user); // Get user role ID.
         let user = await userService.get({ email: body.email, deleted_at: null }); // Get user by email.
-        /* -------------------------------- old code -------------------------------- */
-        // user = !user
-        //     ? await userService.createUser({
-        //           first_name: body.first_name,
-        //           last_name: body.last_name,
-        //           email: body.email,
-        //           social_id: body.social_id,
-        //           social_type: body.social_type,
-        //           is_email_verified: true,
-        //       })
-        //     : await userService.updateUserById(user._id, {
-        //           social_id: body.social_id,
-        //           social_type: body.social_type,
-        //           is_email_verified: true,
-        //       });
 
         /* ------------------------------- //new code ------------------------------- */
         user = !user
@@ -314,11 +197,6 @@ module.exports = {
         if (emailExist.is_block) {
             throw new ApiError(httpStatus.UNAUTHORIZED, MESSAGE.account_blocked); // If the user is blocked, throw an error.
         }
-
-        // let token = await tokenService.getToken({
-        //     type: TOKEN_TYPES.verifyOtp,
-        //     user: emailExist._id,
-        // }); // Get token by type and user.
         let token = await tokenService.get({
             type: TOKEN_TYPES.verifyOtp,
             user: emailExist._id,
@@ -365,53 +243,3 @@ module.exports = {
     }),
 };
 
-/*
-Example: localization API error message.
-const login = catchAsync(async (req, res) => {
-    const { email, password } = req.body;
-    let resMessage,
-        data = {};
-
-    const reqT = req.i18n.t;
-
-    let emailExist = await userService.getUserByEmail(email); // Get user by email.
-
-    if (!emailExist) {
-        throw new ApiError(httpStatus.NOT_FOUND, generateMessage(reqT, 'not_found', 'email')); // If email doesn't exist, throw an error.
-    }
-
-    if (emailExist.isBlock) {
-        throw new ApiError(httpStatus.UNAUTHORIZED, generateMessage(reqT, 'account_blocked')); // If the user is blocked, throw an error.
-    }
-
-    if (!emailExist.isEmailVerified) {
-        const otp = await tokenService.generateOtpToken(emailExist); // Generate OTP.
-
-        const mailSent = await emailService.sendVerifyEmail({
-            ...req.body,
-            otp,
-            subject: 'Login!',
-        }); // Send mail on requested email by users.
-
-        if (!mailSent) {
-            throw new ApiError(
-                httpStatus.BAD_REQUEST,
-                generateMessage(reqT, 'something_went_wrong')
-            ); // If mail doesn't send, throw an error.
-        }
-
-        resMessage = generateMessage(reqT, 'otp_sent', 'email');
-    } else {
-        if (!emailExist.password || !(await emailExist.isPasswordMatch(password))) {
-            throw new ApiError(httpStatus.UNAUTHORIZED, generateMessage(reqT, 'wrong', 'password')); // If password doesn't match the user's password, throw an error.
-        }
-
-        data.user = emailExist;
-        data.tokens = await tokenService.generateAuthTokens(emailExist); // Generate auth token.
-
-        resMessage = generateMessage(reqT, 'successful', 'login');
-    }
-
-    res.status(httpStatus.OK).json({ success: true, message: resMessage, data });
-});
-*/
