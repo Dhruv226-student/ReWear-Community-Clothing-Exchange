@@ -1,23 +1,26 @@
-"use client"
+"use client";
 
-import { useFeaturedItems } from "@/hooks/useItems"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Heart, Star } from "lucide-react"
-import Link from "next/link"
+import { useFeaturedItems } from "@/hooks/useItems";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Heart, Star } from "lucide-react";
+import Link from "next/link";
 
 export function FeaturedItems() {
-  const { data: featuredItems = [], isLoading, error } = useFeaturedItems()
+  const { data: featuredItems = [], isLoading, error } = useFeaturedItems();
 
   if (isLoading) {
     return (
       <section className="py-16 lg:py-24">
         <div className="container">
           <div className="text-center mb-12">
-            <h2 className="text-3xl lg:text-4xl font-bold mb-4">Featured Items</h2>
+            <h2 className="text-3xl lg:text-4xl font-bold mb-4">
+              Featured Items
+            </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Discover amazing pieces from our community. These items are trending and highly rated by our users.
+              Discover amazing pieces from our community. These items are
+              trending and highly rated by our users.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -36,32 +39,40 @@ export function FeaturedItems() {
           </div>
         </div>
       </section>
-    )
+    );
   }
 
   if (error) {
     return (
       <section className="py-16 lg:py-24">
         <div className="container text-center">
-          <p className="text-muted-foreground">Failed to load featured items. Please try again later.</p>
+          <p className="text-muted-foreground">
+            Failed to load featured items. Please try again later.
+          </p>
         </div>
       </section>
-    )
+    );
   }
 
   return (
     <section className="py-16 lg:py-24">
       <div className="container">
         <div className="text-center mb-12">
-          <h2 className="text-3xl lg:text-4xl font-bold mb-4">Featured Items</h2>
+          <h2 className="text-3xl lg:text-4xl font-bold mb-4">
+            Featured Items
+          </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Discover amazing pieces from our community. These items are trending and highly rated by our users.
+            Discover amazing pieces from our community. These items are trending
+            and highly rated by our users.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {featuredItems.map((item) => (
-            <Card key={item.id} className="group hover:shadow-lg transition-shadow">
+            <Card
+              key={item._id}
+              className="group hover:shadow-lg transition-shadow"
+            >
               <CardContent className="p-0">
                 <div className="relative">
                   <img
@@ -70,7 +81,10 @@ export function FeaturedItems() {
                     className="w-full h-48 object-cover rounded-t-lg"
                   />
                   <div className="absolute top-2 left-2">
-                    <Badge variant="secondary" className="bg-green-100 text-green-800">
+                    <Badge
+                      variant="secondary"
+                      className="bg-green-100 text-green-800"
+                    >
                       <Star className="h-3 w-3 mr-1" />
                       Featured
                     </Badge>
@@ -78,8 +92,12 @@ export function FeaturedItems() {
                 </div>
 
                 <div className="p-4">
-                  <h3 className="font-semibold mb-1 group-hover:text-primary transition-colors">{item.title}</h3>
-                  <p className="text-sm text-muted-foreground mb-2 line-clamp-2">{item.description}</p>
+                  <h3 className="font-semibold mb-1 group-hover:text-primary transition-colors">
+                    {item.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
+                    {item.description}
+                  </p>
 
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
@@ -90,11 +108,15 @@ export function FeaturedItems() {
                         {item.condition}
                       </Badge>
                     </div>
-                    <div className="text-sm font-medium text-green-600">{item.pointsValue} pts</div>
+                    <div className="text-sm font-medium text-green-600">
+                      {item.exchange_points} pts
+                    </div>
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <div className="text-xs text-muted-foreground">by {item.userName}</div>
+                    <div className="text-xs text-muted-foreground">
+                      by {item.owner?.first_name} {item.owner?.last_name}
+                    </div>
                     <Button size="sm" asChild>
                       <Link href={`/items/${item.id}`}>View Details</Link>
                     </Button>
@@ -112,5 +134,5 @@ export function FeaturedItems() {
         </div>
       </div>
     </section>
-  )
+  );
 }

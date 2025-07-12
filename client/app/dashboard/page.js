@@ -20,8 +20,8 @@ export default function DashboardPage() {
 
   // Get user's items (first 6 for quick overview)
   const { data: userItemsResponse = {}, isLoading: itemsLoading } = useItems({
-    limit: 6,
-    page: 1,
+    // limit: 1,
+    // page: 1,
     // Add userId filter when your API supports it
     // userId: user?.id
   });
@@ -87,7 +87,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <div className="container py-8">
+      <div className="container py-8 mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">
             Welcome back, {user.first_name}!
@@ -226,11 +226,6 @@ export default function DashboardPage() {
                       </CardContent>
                     </Card>
                   ))}
-                </div>
-                <div className="text-center">
-                  <Button variant="outline" asChild>
-                    <Link href="/my-items">View All My Items</Link>
-                  </Button>
                 </div>
               </>
             ) : (

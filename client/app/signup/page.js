@@ -47,6 +47,7 @@ export default function SignupPage() {
       }
 
       const result = await signup(formData);
+      console.log("=====result=====", result);
       if (result.success) {
         toast({
           title: "Welcome to ReWear!",
