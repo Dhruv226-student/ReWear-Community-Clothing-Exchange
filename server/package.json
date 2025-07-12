@@ -9,8 +9,7 @@
         "lint:fix": "eslint . --fix",
         "prettier": "prettier --check **/*.js",
         "prettier:fix": "prettier --write **/*.js",
-        "seed": "node src/seeder/index.js",
-        "prepare": "husky install"
+        "seed": "node src/seeder/index.js"
     },
     "author": "Micra",
     "license": "ISC",
