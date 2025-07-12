@@ -133,7 +133,7 @@ export default function AddItemPage() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <div className="container py-8 max-w-2xl">
+      <div className="container py-8 max-w-4xl mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">List a New Item</h1>
           <p className="text-muted-foreground">Share details about your item to attract the right swappers.</p>

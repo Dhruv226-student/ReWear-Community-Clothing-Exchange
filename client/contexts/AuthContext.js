@@ -8,6 +8,7 @@ import {
   logoutUser,
   signupUser,
 } from "@/services/api/auth";
+import { useUser } from "@/hooks/useUser";
 
 const AuthContext = createContext();
 
@@ -21,32 +22,42 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null
+  const [isAuthenticated, setIsAuthenticated] = useState(!!token)
+
+
   const [isLoading, setIsLoading] = useState(true);
   const queryClient = useQueryClient();
 
+
+   // // Fetch current user query
+   const {
+    data: currentUser,
+    isLoading: isUserLoading,
+    isFetched,
+    isError,
+  } = useUser()
+
+
+  console.log(currentUser , "currentUser....")
   // Check if user is already logged in on mount
   useEffect(() => {
     const token = localStorage.getItem("access_token");
     if (token) {
       setIsAuthenticated(true);
     }
-    setIsLoading(false);
   }, []);
 
-  // // Fetch current user query
-  // const { data: currentUser, isLoading: isLoadingUser } = useQuery({
-  //   queryKey: ["currentUser"],
-  //   queryFn: fetchCurrentUser,
-  //   enabled: isAuthenticated,
-  //   onSuccess: (data) => {
-  //     setUser(data.data.user);
-  //   },
-  //   onError: () => {
-  //     // If fetching user fails, logout
-  //     handleLogout();
-  //   },
-  // });
+  useEffect(() => {
+    if (currentUser?.data) {
+      setUser(currentUser.data)
+    } else if (isFetched && isError) {
+      handleLogout()
+    }
+  }, [currentUser, isFetched, isError])
+
+ 
 
   // Login mutation
   const loginMutation = useMutation({

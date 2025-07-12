@@ -21,7 +21,7 @@ export const signupUser = async (userData) => {
 
 // Get current user
 export const fetchCurrentUser = async () => {
-  const response = await axiosInstance.get("user/me");
+  const response = await axiosInstance.get("user/get");
   return response.data;
 };
 
