@@ -1,10 +1,11 @@
 // Mock API functions - replace with actual API calls
+import axiosInstance from "@/lib/axiosInstance";
 
 export const api = {
   // Items
   getItems: async (filters = {}) => {
     // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 500))
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
     const mockItems = [
       {
@@ -87,25 +88,54 @@ export const api = {
         status: "available",
         createdAt: "2024-01-11",
       },
-    ]
+    ];
 
-    return mockItems
+    return mockItems;
   },
 
+  // Replace the existing getFeaturedItems method in your lib/api.js
+
   getFeaturedItems: async () => {
-    await new Promise((resolve) => setTimeout(resolve, 300))
-    const items = await api.getItems()
-    return items.slice(0, 4)
+    try {
+      const response = await axiosInstance.get(`item/list?limit=4&page=1`);
+      console.log("=====response=====", response);
+      const data = await response?.data;
+      console.log("=====data=====", data);
+
+      if (!data.success) {
+        throw new Error("Failed to fetch featured items");
+      }
+      // Transform the API response to match your component's expected format
+      return data.data.results.map((item) => ({
+        id: item._id,
+        title: item.title,
+        description: item.description,
+        category: item.category,
+        type: item.type,
+        size: item.size,
+        condition: item.condition,
+        tags: item.tags,
+        images: item.images.length > 0 ? item.images : ["/placeholder.svg"],
+        userId: item.owner._id,
+        userName: `${item.owner.first_name} ${item.owner.last_name}`,
+        pointsValue: item.exchange_points,
+        status: item.status.toLowerCase(),
+        createdAt: item.createdAt,
+      }));
+    } catch (error) {
+      console.error("Error fetching featured items:", error);
+      throw error;
+    }
   },
 
   getItemById: async (id) => {
-    await new Promise((resolve) => setTimeout(resolve, 300))
-    const items = await api.getItems()
-    return items.find((item) => item.id === id)
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    const items = await api.getItems();
+    return items.find((item) => item.id === id);
   },
 
   getUserItems: async (userId) => {
-    await new Promise((resolve) => setTimeout(resolve, 300))
+    await new Promise((resolve) => setTimeout(resolve, 300));
     return [
       {
         id: "user-1",
@@ -139,22 +169,22 @@ export const api = {
         status: "pending",
         createdAt: "2024-01-08",
       },
-    ]
+    ];
   },
 
   createItem: async (itemData) => {
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     return {
       id: Date.now().toString(),
       ...itemData,
       status: "available",
       createdAt: new Date().toISOString(),
-    }
+    };
   },
 
   // Swaps
   getUserSwaps: async (userId) => {
-    await new Promise((resolve) => setTimeout(resolve, 300))
+    await new Promise((resolve) => setTimeout(resolve, 300));
     return {
       incoming: [
         {
@@ -173,22 +203,22 @@ export const api = {
         },
       ],
       outgoing: [],
-    }
+    };
   },
 
   createSwapRequest: async (swapData) => {
-    await new Promise((resolve) => setTimeout(resolve, 500))
+    await new Promise((resolve) => setTimeout(resolve, 500));
     return {
       id: Date.now().toString(),
       ...swapData,
       status: "pending",
       createdAt: new Date().toISOString(),
-    }
+    };
   },
 
   // Admin
   getPendingItems: async () => {
-    await new Promise((resolve) => setTimeout(resolve, 300))
+    await new Promise((resolve) => setTimeout(resolve, 300));
     return [
       {
         id: "pending-1",
@@ -212,11 +242,11 @@ export const api = {
         submittedAt: "2024-01-16",
         status: "pending",
       },
-    ]
+    ];
   },
 
   getReportedItems: async () => {
-    await new Promise((resolve) => setTimeout(resolve, 300))
+    await new Promise((resolve) => setTimeout(resolve, 300));
     return [
       {
         id: "report-1",
@@ -228,11 +258,11 @@ export const api = {
         reportReason: "Misleading description",
         reportedAt: "2024-01-15",
       },
-    ]
+    ];
   },
 
   getUsers: async () => {
-    await new Promise((resolve) => setTimeout(resolve, 300))
+    await new Promise((resolve) => setTimeout(resolve, 300));
     return [
       {
         id: "1",
@@ -254,6 +284,6 @@ export const api = {
         points: 80,
         status: "active",
       },
-    ]
+    ];
   },
-}
+};

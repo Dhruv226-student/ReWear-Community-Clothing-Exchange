@@ -1,13 +1,22 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+// hooks/useItems.js
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  createOrUpdateItem,
+  fetchItems,
+  fetchItemById,
+  fetchItemDetails,
+  deleteItem,
+  fetchUserItems,
+} from "@/services/api/items";
 import { api } from "@/lib/api";
-import { fetchItemsList } from "../services/api/items";
 
-export function useItems(filters = {}) {
-  return useQuery({
-    queryKey: ["items", filters],
-    queryFn: fetchItemsList,
-  });
-}
+// Query keys
+export const ITEMS_QUERY_KEYS = {
+  items: ["items"],
+  item: (id) => ["items", id],
+  itemDetails: (id) => ["items", "details", id],
+  userItems: (userId) => ["items", "user", userId],
+};
 
 // Create or Update Item Hook
 export const useCreateOrUpdateItem = () => {
@@ -95,3 +104,15 @@ export const useUserItems = (userId) => {
     staleTime: 5 * 60 * 1000,
   });
 };
+
+export function useFeaturedItems() {
+  return useQuery({
+    queryKey: ["items", "featured"],
+    queryFn: api.getFeaturedItems,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 2,
+    onError: (error) => {
+      console.error("Error fetching featured items:", error);
+    },
+  });
+}

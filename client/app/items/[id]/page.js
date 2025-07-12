@@ -231,89 +231,85 @@ export default function ItemDetailPage({ params }) {
             <Card>
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
-                  <Avatar>
-                    <AvatarImage
-                      src={item.userAvatar || "/placeholder.svg"}
-                      alt={item?.userName}
-                    />
-                    <AvatarFallback>{item?.userName?.charAt(0)}</AvatarFallback>
-                  </Avatar>
+                  {item.owner?.first_name + " " + item.owner?.last_name}
                 </div>
               </CardContent>
             </Card>
 
             {/* Action Buttons */}
-            <div className="space-y-3">
-              <Dialog open={showSwapDialog} onOpenChange={setShowSwapDialog}>
-                <DialogTrigger asChild>
-                  <Button
-                    size="lg"
-                    className="w-full"
-                    disabled={createSwapMutation.isPending}
-                  >
-                    {createSwapMutation.isPending
-                      ? "Sending Request..."
-                      : "Request Swap"}
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Request a Swap</DialogTitle>
-                    <DialogDescription>
-                      Send a message to {item.userName} about swapping for this
-                      item.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="message">Message (optional)</Label>
-                      <Textarea
-                        id="message"
-                        placeholder="Tell them why you're interested in this item..."
-                        value={swapMessage}
-                        onChange={(e) => setSwapMessage(e.target.value)}
-                        rows={3}
-                      />
+            {item.owner?._id != user?._id && (
+              <div className="space-y-3">
+                <Dialog open={showSwapDialog} onOpenChange={setShowSwapDialog}>
+                  <DialogTrigger asChild>
+                    <Button
+                      size="lg"
+                      className="w-full"
+                      disabled={createSwapMutation.isPending}
+                    >
+                      {createSwapMutation.isPending
+                        ? "Sending Request..."
+                        : "Request Swap"}
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Request a Swap</DialogTitle>
+                      <DialogDescription>
+                        Send a message to {item.userName} about swapping for
+                        this item.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="message">Message (optional)</Label>
+                        <Textarea
+                          id="message"
+                          placeholder="Tell them why you're interested in this item..."
+                          value={swapMessage}
+                          onChange={(e) => setSwapMessage(e.target.value)}
+                          rows={3}
+                        />
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          onClick={handleSwapRequest}
+                          className="flex-1"
+                          disabled={createSwapMutation.isPending}
+                        >
+                          {createSwapMutation.isPending
+                            ? "Sending..."
+                            : "Send Request"}
+                        </Button>
+                        <Button
+                          variant="outline"
+                          onClick={() => setShowSwapDialog(false)}
+                        >
+                          Cancel
+                        </Button>
+                      </div>
                     </div>
-                    <div className="flex gap-2">
-                      <Button
-                        onClick={handleSwapRequest}
-                        className="flex-1"
-                        disabled={createSwapMutation.isPending}
-                      >
-                        {createSwapMutation.isPending
-                          ? "Sending..."
-                          : "Send Request"}
-                      </Button>
-                      <Button
-                        variant="outline"
-                        onClick={() => setShowSwapDialog(false)}
-                      >
-                        Cancel
-                      </Button>
-                    </div>
-                  </div>
-                </DialogContent>
-              </Dialog>
+                  </DialogContent>
+                </Dialog>
 
-              <Button
-                size="lg"
-                variant="outline"
-                className="w-full bg-transparent"
-                onClick={handleRedeemWithPoints}
-                disabled={
-                  !isAuthenticated ||
-                  (user && user.points < item.exchange_points)
-                }
-              >
-                Redeem with Points ({item.exchange_points} pts)
-                {user && user.points < item.exchange_points && (
-                  <span className="ml-2 text-xs text-muted-foreground">
-                    (Need {item.exchange_points - user.points} more)
-                  </span>
-                )}
-              </Button>
-            </div>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="w-full bg-transparent"
+                  onClick={handleRedeemWithPoints}
+                  disabled={
+                    !isAuthenticated ||
+                    (user && user.points < item.exchange_points)
+                  }
+                >
+                  Redeem with Points ({item.exchange_points} pts)
+                  {user && user.points < item.exchange_points && (
+                    <span className="ml-2 text-xs text-muted-foreground">
+                      (Need {item.exchange_points - user.points} more)
+                    </span>
+                  )}
+                </Button>
+              </div>
+            )}
 
             {/* Item Stats */}
             <Card>
