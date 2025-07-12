@@ -1,35 +1,58 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { usePendingItems, useReportedItems, useUsers } from "@/hooks/useAdmin"
-import { Header } from "@/components/layout/header"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { AlertTriangle, CheckCircle, XCircle, Users, Package, Flag, Search } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
-import { updateItemsStatus } from "@/services/api/admin"
+import { useState } from "react";
+import { usePendingItems, useReportedItems, useUsers } from "@/hooks/useAdmin";
+import { Header } from "@/components/layout/header";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  AlertTriangle,
+  CheckCircle,
+  XCircle,
+  Users,
+  Package,
+  Flag,
+  Search,
+} from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { updateItemsStatus } from "@/services/api/admin";
 
 export default function AdminPage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [filterStatus, setFilterStatus] = useState("all")
-  const { toast } = useToast()
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState("all");
+  const { toast } = useToast();
 
-  const { data: pendingItems = [], isLoading: pendingLoading } = usePendingItems()
-  const { data: users = [], isLoading: usersLoading } = useUsers()
+  const {
+    data: pendingItems = [],
+    isLoading: pendingLoading,
+    refetch: refetchPendingItems,
+  } = usePendingItems();
+  const { data: users = [], isLoading: usersLoading } = useUsers();
 
-  console.log(users , "users")
-  const handleApproveItem = (itemId) => {
-    updateItemsStatus({ itemId, status: "Approved" })
-  }
-  
+  console.log(users, "users");
+  const handleApproveItem = async (itemId) => {
+    updateItemsStatus({ itemId, status: "Approved" });
+    await refetchPendingItems();
+
+    toast({
+      title: "Item Approved",
+      description: "The item has been successfully approved.",
+    });
+  };
+
   const handleRejectItem = (itemId) => {
-    updateItemsStatus({ itemId, status: "Rejected" })
-  }  
-
+    updateItemsStatus({ itemId, status: "Rejected" });
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -37,10 +60,10 @@ export default function AdminPage() {
       <div className="container py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">Admin Dashboard</h1>
-          <p className="text-muted-foreground">Manage items, users, and platform moderation.</p>
+          <p className="text-muted-foreground">
+            Manage items, users, and platform moderation.
+          </p>
         </div>
-
-       
 
         {/* Main Content */}
         <Tabs defaultValue="pending" className="space-y-6">
@@ -48,12 +71,15 @@ export default function AdminPage() {
             <TabsTrigger value="pending">
               Pending Items
               {pendingItems.length > 0 && (
-                <Badge variant="destructive" className="ml-2 h-5 w-5 p-1 text-xs">
+                <Badge
+                  variant="destructive"
+                  className="ml-2 h-5 w-5 p-1 text-xs"
+                >
                   {pendingItems.length}
                 </Badge>
               )}
             </TabsTrigger>
-          
+
             <TabsTrigger value="users">Users</TabsTrigger>
           </TabsList>
 
@@ -93,14 +119,22 @@ export default function AdminPage() {
                         <div className="flex-1">
                           <div className="flex items-start justify-between mb-2">
                             <div>
-                              <h3 className="font-semibold text-lg">{item.title}</h3>
+                              <h3 className="font-semibold text-lg">
+                                {item.title}
+                              </h3>
                               <p className="text-sm text-muted-foreground">
-                                by {item.owner.first_name + " " + item.owner.last_name} • {item.category} • {item.condition}
+                                by{" "}
+                                {item.owner.first_name +
+                                  " " +
+                                  item.owner.last_name}{" "}
+                                • {item.category} • {item.condition}
                               </p>
                             </div>
                             <Badge variant="outline">Pending Review</Badge>
                           </div>
-                          <p className="text-sm mb-4 line-clamp-2">{item.description}</p>
+                          <p className="text-sm mb-4 line-clamp-2">
+                            {item.description}
+                          </p>
                           <div className="flex gap-2">
                             <Button
                               size="sm"
@@ -110,7 +144,11 @@ export default function AdminPage() {
                               <CheckCircle className="h-4 w-4 mr-2" />
                               Approve
                             </Button>
-                            <Button size="sm" variant="destructive" onClick={() => handleRejectItem(item._id)}>
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={() => handleRejectItem(item._id)}
+                            >
                               <XCircle className="h-4 w-4 mr-2" />
                               Reject
                             </Button>
@@ -126,7 +164,9 @@ export default function AdminPage() {
                 <CardContent className="p-8 text-center">
                   <CheckCircle className="h-12 w-12 text-green-600 mx-auto mb-4" />
                   <h3 className="text-lg font-semibold mb-2">All caught up!</h3>
-                  <p className="text-muted-foreground">No items pending review at the moment.</p>
+                  <p className="text-muted-foreground">
+                    No items pending review at the moment.
+                  </p>
                 </CardContent>
               </Card>
             )}
@@ -188,25 +228,44 @@ export default function AdminPage() {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
                           <div>
-                            <h3 className="font-semibold">{user.first_name + " " + user.last_name}</h3>
-                            <p className="text-sm text-muted-foreground">{user.email}</p>
-                          
+                            <h3 className="font-semibold">
+                              {user.first_name + " " + user.last_name}
+                            </h3>
+                            <p className="text-sm text-muted-foreground">
+                              {user.email}
+                            </p>
                           </div>
                         </div>
                         <div className="flex items-center gap-6">
                           <div className="text-center">
-                            <div className="text-lg font-semibold">{user.itemsListed}</div>
-                            <div className="text-xs text-muted-foreground">Items</div>
+                            <div className="text-lg font-semibold">
+                              {user.itemsListed}
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                              Items
+                            </div>
                           </div>
                           <div className="text-center">
-                            <div className="text-lg font-semibold">{user.swapsCompleted}</div>
-                            <div className="text-xs text-muted-foreground">Swaps</div>
+                            <div className="text-lg font-semibold">
+                              {user.swapsCompleted}
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                              Swaps
+                            </div>
                           </div>
                           <div className="text-center">
-                            <div className="text-lg font-semibold text-green-600">{user.points}</div>
-                            <div className="text-xs text-muted-foreground">Points</div>
+                            <div className="text-lg font-semibold text-green-600">
+                              {user.points}
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                              Points
+                            </div>
                           </div>
-                          <Badge variant={user.is_active ? "default" : "destructive"}>{user.is_active ? "active" : "In Active"}</Badge>
+                          <Badge
+                            variant={user.is_active ? "default" : "destructive"}
+                          >
+                            {user.is_active ? "active" : "In Active"}
+                          </Badge>
                         </div>
                       </div>
                     </CardContent>
@@ -218,5 +277,5 @@ export default function AdminPage() {
         </Tabs>
       </div>
     </div>
-  )
+  );
 }
