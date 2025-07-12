@@ -69,9 +69,14 @@ const getAllItems = catchAsync(async (req, res) => {
 
 /** Get details */
 const getDetails = catchAsync(async (req, res) => {
+    const item = await itemService.getItemDtl({ _id: req.params.itemId });
+    if (!item) {
+        throw new ApiError(404, 'Item not found');
+    }
+
     return res.status(200).json({
         success: true,
-        data: await itemService.getItemDtl({ _id: req.params.itemId }),
+        data: item,
     });
 });
 
