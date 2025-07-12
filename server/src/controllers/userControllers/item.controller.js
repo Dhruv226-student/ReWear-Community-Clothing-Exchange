@@ -1,0 +1,84 @@
+const ApiError = require('../../utils/apiError');
+const catchAsync = require('../../utils/catchAsync');
+const itemService = require('../../services/item.service');
+const fileService = require('../../services/files.service');
+const { FILES_FOLDER } = require('../../helper/constant.helper');
+
+/** Create */
+const createItem = catchAsync(async (req, res) => {
+    const {
+        user,
+        body: { itemId, remove_images, ...body },
+        files,
+    } = req;
+
+    body.owner = user._id;
+
+    let resMsg = 'Item created successfully';
+
+    let item;
+    if (itemId) {
+        item = await itemService.getItemDtl({ _id: itemId });
+        if (!item) {
+            throw new ApiError(404, 'Item not found');
+        }
+
+        resMsg = 'Item updated successfully';
+    } else {
+        item = await itemService.createItemConstructor(body);
+    }
+
+    if (remove_images?.length) {
+        fileService.deleteFiles(remove_images);
+
+        body.images = item.images.filter((image) => !remove_images.includes(image));
+    }
+
+    if (files.length) {
+        const { path } = await fileService.saveFile({
+            file: files,
+            folderName: FILES_FOLDER.clothImages,
+        });
+
+        body.images = remove_images?.length ? [...body.images, ...path] : [...item.images, ...path];
+    }
+
+    Object.assign(item, body);
+
+    // Save item in database.
+    await item.save();
+
+    return res.status(200).json({
+        success: true,
+        message: resMsg,
+        data: item,
+    });
+});
+
+/** Get list */
+const getAllItems = catchAsync(async (req, res) => {
+    // Implement your logic here
+});
+
+/** Get details */
+const getDetails = catchAsync(async (req, res) => {
+    // Implement your logic here
+});
+
+/** Update */
+const updateItem = catchAsync(async (req, res) => {
+    // Implement your logic here
+});
+
+/** Delete */
+const deleteItem = catchAsync(async (req, res) => {
+    // Implement your logic here
+});
+
+module.exports = {
+    createItem,
+    getAllItems,
+    getDetails,
+    updateItem,
+    deleteItem,
+};
