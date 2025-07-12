@@ -1,0 +1,13 @@
+# Dependencies
+node_modules
+
+# Environment varibales
+.env
+
+# public
+public/*
+!public/default/
+public/default/.DS_Store
+
+package-lock.json
+yarn.lock
