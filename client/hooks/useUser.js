@@ -1,9 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
 import { fetchCurrentUser } from '../services/api/user'
 
-export const useUser = () => {
+export const useUser = (enabled = true) => {
   return useQuery({
     queryKey: ['user'],
-    queryFn: fetchCurrentUser
+    queryFn: fetchCurrentUser,
+    retry: 3,
+    enabled   
   })
 }

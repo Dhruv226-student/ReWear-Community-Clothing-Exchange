@@ -1,21 +1,13 @@
-// hooks/useItems.js
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-  createOrUpdateItem,
-  fetchItems,
-  fetchItemById,
-  fetchItemDetails,
-  deleteItem,
-  fetchUserItems,
-} from "@/services/api/items";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { api } from "@/lib/api";
+import { fetchItemsList } from "../services/api/items";
 
-// Query keys
-export const ITEMS_QUERY_KEYS = {
-  items: ["items"],
-  item: (id) => ["items", id],
-  itemDetails: (id) => ["items", "details", id],
-  userItems: (userId) => ["items", "user", userId],
-};
+export function useItems(filters = {}) {
+  return useQuery({
+    queryKey: ["items", filters],
+    queryFn: fetchItemsList,
+  });
+}
 
 // Create or Update Item Hook
 export const useCreateOrUpdateItem = () => {

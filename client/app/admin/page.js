@@ -81,12 +81,6 @@ export default function AdminPage() {
       icon: Package,
       color: "text-blue-600",
     },
-    {
-      title: "Reports",
-      value: reportedItems.length,
-      icon: Flag,
-      color: "text-red-600",
-    },
   ];
 
   return (
@@ -101,7 +95,7 @@ export default function AdminPage() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {stats.map((stat, index) => (
             <Card key={index}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -125,23 +119,13 @@ export default function AdminPage() {
               {pendingItems.length > 0 && (
                 <Badge
                   variant="destructive"
-                  className="ml-2 h-5 w-5 p-0 text-xs"
+                  className="ml-2 h-5 w-5 p-1 text-xs"
                 >
                   {pendingItems.length}
                 </Badge>
               )}
             </TabsTrigger>
-            <TabsTrigger value="reports">
-              Reports
-              {reportedItems.length > 0 && (
-                <Badge
-                  variant="destructive"
-                  className="ml-2 h-5 w-5 p-0 text-xs"
-                >
-                  {reportedItems.length}
-                </Badge>
-              )}
-            </TabsTrigger>
+
             <TabsTrigger value="users">Users</TabsTrigger>
           </TabsList>
 
@@ -228,82 +212,6 @@ export default function AdminPage() {
                   <h3 className="text-lg font-semibold mb-2">All caught up!</h3>
                   <p className="text-muted-foreground">
                     No items pending review at the moment.
-                  </p>
-                </CardContent>
-              </Card>
-            )}
-          </TabsContent>
-
-          <TabsContent value="reports" className="space-y-6">
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-semibold">Reported Items</h2>
-            </div>
-
-            {reportsLoading ? (
-              <div className="space-y-4">
-                {[...Array(2)].map((_, i) => (
-                  <Card key={i} className="animate-pulse">
-                    <CardContent className="p-6">
-                      <div className="space-y-2">
-                        <div className="h-4 bg-muted rounded w-1/2" />
-                        <div className="h-3 bg-muted rounded w-3/4" />
-                        <div className="h-3 bg-muted rounded w-1/4" />
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            ) : reportedItems.length > 0 ? (
-              <div className="space-y-4">
-                {reportedItems.map((item) => (
-                  <Card key={item.id}>
-                    <CardContent className="p-6">
-                      <div className="flex items-start justify-between mb-4">
-                        <div>
-                          <h3 className="font-semibold text-lg">
-                            {item.title}
-                          </h3>
-                          <p className="text-sm text-muted-foreground">
-                            Listed by {item.userName} • Reported by{" "}
-                            {item.reportedBy}
-                          </p>
-                        </div>
-                        <Badge variant="destructive">Reported</Badge>
-                      </div>
-                      <div className="mb-4">
-                        <p className="text-sm font-medium mb-1">
-                          Report Reason:
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          {item.reportReason}
-                        </p>
-                      </div>
-                      <p className="text-sm mb-4">{item.description}</p>
-                      <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          onClick={() => handleResolveReport(item.id)}
-                        >
-                          Resolve Report
-                        </Button>
-                        <Button size="sm" variant="destructive">
-                          Remove Item
-                        </Button>
-                        <Button size="sm" variant="outline">
-                          Contact User
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            ) : (
-              <Card>
-                <CardContent className="p-8 text-center">
-                  <CheckCircle className="h-12 w-12 text-green-600 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">No reports!</h3>
-                  <p className="text-muted-foreground">
-                    No reported items to review at the moment.
                   </p>
                 </CardContent>
               </Card>
