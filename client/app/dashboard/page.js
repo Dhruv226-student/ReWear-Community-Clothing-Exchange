@@ -119,7 +119,6 @@ export default function DashboardPage() {
         <Tabs defaultValue="items" className="space-y-6">
           <TabsList>
             <TabsTrigger value="items">My Items</TabsTrigger>
-            <TabsTrigger value="browse">Browse Items</TabsTrigger>
             <TabsTrigger value="swaps">
               Swap Requests
               {swapsData.incoming.length > 0 && (
@@ -131,7 +130,6 @@ export default function DashboardPage() {
                 </Badge>
               )}
             </TabsTrigger>
-            <TabsTrigger value="history">History</TabsTrigger>
           </TabsList>
 
           <TabsContent value="items" className="space-y-6">
