@@ -12,9 +12,7 @@ const getAllItems = catchAsync(async (req, res) => {
         query: { search, ...options },
     } = req;
 
-    let filter = {
-        status: ITEM.STATUS.approved,
-    };
+    let filter = {};
 
     if (search) {
         filter.title = { $regex: str2regex(search), $options: 'i' };
