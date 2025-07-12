@@ -6,17 +6,17 @@
 
 ## 👨‍💻 Team Members
 
-1. **[Your Name]** – Frontend Developer  
-   📧 Jaimin Vaddoriya <jaiminvaddoriya194@gmail.com>
+1. **Jaimin Vaddoriya** – Frontend Developer  
+   📧 jaiminvaddoriya194@gmail.com
 
-2. **[Member 2 Name]** – Backend
-3. rathodjay0026@gmail.com
+2. **Jay Rathod** – Backend Developer  
+   📧 rathodjay0026@gmail.com
 
-4. **[Member 3 Name]** – UI/UX Designer  
-   📧 darshantarpada66@gmail.com <darshantarpada66@gmail.com>
+3. **Darshan Tarpada** – UI/UX Designer  
+   📧 darshantarpada66@gmail.com
 
-5. **[Member 4 Name]** – Database & Logic  
-   📧 pateldhruv5536@gmail.com 
+4. **Dhruv Patel** – Database & Logic  
+   📧 pateldhruv5536@gmail.com
 
 ---
 
@@ -26,7 +26,7 @@
 - **Backend**: Node.js + Express  
 - **Database**: MongoDB  
 - **Authentication**: JWT  
-- **Hosting**: Vercel (Frontend), Railway/Render (Backend)
+<!-- - **Hosting**: Vercel (Frontend), Railway / Render (Backend) -->
 
 ---
 
@@ -43,9 +43,21 @@
 ## 📦 Run Locally
 
 ```bash
-# Install frontend and backend separately
-cd client && npm install
-cd ../server && npm install
+# Clone the repository
+git clone https://github.com/your-team/rewear.git
+cd rewear
 
-# Run both
-npm run dev  # in each folder
+# Install frontend dependencies
+cd client
+npm install
+
+# Install backend dependencies
+cd ../server
+npm install
+
+# Start the backend server
+npm run dev
+
+# In a new terminal, start the frontend
+cd ../client
+npm run dev
