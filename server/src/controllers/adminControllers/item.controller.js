@@ -2,6 +2,7 @@ const ApiError = require('../../utils/apiError');
 const catchAsync = require('../../utils/catchAsync');
 const itemService = require('../../services/item.service');
 const fileService = require('../../services/files.service');
+const userService = require('../../services/user.service');
 const { FILES_FOLDER, ITEM } = require('../../helper/constant.helper');
 const { str2regex } = require('../../helper/function.helper');
 
@@ -56,15 +57,23 @@ const getDetails = catchAsync(async (req, res) => {
 const manageItemStatus = catchAsync(async (req, res) => {
     const { params, body } = req;
 
-    const updatedItem = await itemService.updateItem({ _id: params.itemId }, { $set: body });
-    if (!updatedItem) {
+    let itemDtl = await itemService.getItemDtl({ _id: req.params.itemId });
+    if (!itemDtl) {
         throw new ApiError(404, 'Item not found');
     }
+
+    if (body.status === ITEM.STATUS.approved && itemDtl.first_approval) {
+        await userService.update({ _id: itemDtl.owner }, { $inc: { points: 10 } });
+
+        body.first_approval = false;
+    }
+
+    itemDtl = await itemService.updateItem({ _id: params.itemId }, { $set: body }, { new: true });
 
     return res.status(200).json({
         success: true,
         message: body.status,
-        data: updatedItem,
+        data: itemDtl,
     });
 });
 
