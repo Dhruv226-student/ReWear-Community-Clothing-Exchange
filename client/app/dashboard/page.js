@@ -1,30 +1,35 @@
-"use client"
+"use client";
 
-import { useAuth } from "@/contexts/AuthContext"
-import { useUserItems } from "@/hooks/useItems"
-import { useUserSwaps } from "@/hooks/useSwaps"
-import { Header } from "@/components/layout/header"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Plus, Package, ArrowUpDown, Star, TrendingUp } from "lucide-react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { useEffect } from "react"
+import { useAuth } from "@/contexts/AuthContext";
+import { useUserItems } from "@/hooks/useItems";
+import { useUserSwaps } from "@/hooks/useSwaps";
+import { Header } from "@/components/layout/header";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Plus, Package, ArrowUpDown, Star, TrendingUp } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function DashboardPage() {
-  const { user, isAuthenticated, loading: authLoading } = useAuth()
-  const router = useRouter()
+  const { user, isAuthenticated, loading: authLoading } = useAuth();
+  const router = useRouter();
 
-  const { data: userItems = [], isLoading: itemsLoading } = useUserItems(user?.id)
-  const { data: swapsData = { incoming: [], outgoing: [] }, isLoading: swapsLoading } = useUserSwaps(user?.id)
+  const { data: userItems = [], isLoading: itemsLoading } = useUserItems(
+    user?.id
+  );
+  const {
+    data: swapsData = { incoming: [], outgoing: [] },
+    isLoading: swapsLoading,
+  } = useUserSwaps(user?.id);
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
-      router.push("/login")
+      router.push("/login");
     }
-  }, [isAuthenticated, authLoading, router])
+  }, [isAuthenticated, authLoading, router]);
 
   if (authLoading || !user) {
     return (
@@ -46,7 +51,7 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   const stats = [
@@ -74,16 +79,19 @@ export default function DashboardPage() {
       icon: TrendingUp,
       color: "text-orange-600",
     },
-  ]
+  ];
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
       <div className="container py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Welcome back, {user.name}!</h1>
+          <h1 className="text-3xl font-bold mb-2">
+            Welcome back, {user.name}!
+          </h1>
           <p className="text-muted-foreground">
-            Manage your items, track swaps, and discover new pieces for your wardrobe.
+            Manage your items, track swaps, and discover new pieces for your
+            wardrobe.
           </p>
         </div>
 
@@ -92,7 +100,9 @@ export default function DashboardPage() {
           {stats.map((stat, index) => (
             <Card key={index}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  {stat.title}
+                </CardTitle>
                 <stat.icon className={`h-4 w-4 ${stat.color}`} />
               </CardHeader>
               <CardContent>
@@ -109,7 +119,10 @@ export default function DashboardPage() {
             <TabsTrigger value="swaps">
               Swap Requests
               {swapsData.incoming.length > 0 && (
-                <Badge variant="destructive" className="ml-2 h-5 w-5 p-0 text-xs">
+                <Badge
+                  variant="destructive"
+                  className="ml-2 h-5 w-5 p-0 text-xs"
+                >
                   {swapsData.incoming.length}
                 </Badge>
               )}
@@ -152,12 +165,22 @@ export default function DashboardPage() {
                         className="w-full h-48 object-cover"
                       />
                       <div className="absolute top-2 right-2">
-                        <Badge variant={item.status === "available" ? "default" : "secondary"}>{item.status}</Badge>
+                        <Badge
+                          variant={
+                            item.status === "available"
+                              ? "default"
+                              : "secondary"
+                          }
+                        >
+                          {item.status}
+                        </Badge>
                       </div>
                     </div>
                     <CardContent className="p-4">
                       <h3 className="font-semibold mb-1">{item.title}</h3>
-                      <p className="text-sm text-muted-foreground mb-2 line-clamp-2">{item.description}</p>
+                      <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
+                        {item.description}
+                      </p>
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex gap-2">
                           <Badge variant="outline" className="text-xs">
@@ -167,9 +190,16 @@ export default function DashboardPage() {
                             {item.condition}
                           </Badge>
                         </div>
-                        <div className="text-sm font-medium text-green-600">{item.pointsValue} pts</div>
+                        <div className="text-sm font-medium text-green-600">
+                          {item.pointsValue} pts
+                        </div>
                       </div>
-                      <Button size="sm" variant="outline" className="w-full bg-transparent" asChild>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="w-full bg-transparent"
+                        asChild
+                      >
                         <Link href={`/items/${item.id}`}>View Details</Link>
                       </Button>
                     </CardContent>
@@ -181,7 +211,9 @@ export default function DashboardPage() {
                 <CardContent className="p-8 text-center">
                   <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                   <h3 className="text-lg font-semibold mb-2">No items yet</h3>
-                  <p className="text-muted-foreground mb-4">Start by listing your first item to begin swapping!</p>
+                  <p className="text-muted-foreground mb-4">
+                    Start by listing your first item to begin swapping!
+                  </p>
                   <Button asChild>
                     <Link href="/add-item">List Your First Item</Link>
                   </Button>
@@ -227,10 +259,14 @@ export default function DashboardPage() {
                             <Badge variant="outline">{swap.status}</Badge>
                           </div>
                           <p className="text-sm text-muted-foreground mb-2">
-                            <strong>{swap.requesterName}</strong> wants to swap for{" "}
-                            <strong>{swap.pointsOffered} points</strong>
+                            <strong>{swap.requesterName}</strong> wants to swap
+                            for <strong>{swap.pointsOffered} points</strong>
                           </p>
-                          {swap.message && <p className="text-sm mb-3 p-2 bg-muted rounded">"{swap.message}"</p>}
+                          {swap.message && (
+                            <p className="text-sm mb-3 p-2 bg-muted rounded">
+                              "{swap.message}"
+                            </p>
+                          )}
                           <div className="flex gap-2">
                             <Button size="sm">Accept</Button>
                             <Button size="sm" variant="outline">
@@ -250,9 +286,12 @@ export default function DashboardPage() {
               <Card>
                 <CardContent className="p-8 text-center">
                   <ArrowUpDown className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">No swap requests yet</h3>
+                  <h3 className="text-lg font-semibold mb-2">
+                    No swap requests yet
+                  </h3>
                   <p className="text-muted-foreground">
-                    When someone wants to swap with your items, you'll see their requests here.
+                    When someone wants to swap with your items, you'll see their
+                    requests here.
                   </p>
                 </CardContent>
               </Card>
@@ -264,13 +303,17 @@ export default function DashboardPage() {
             <Card>
               <CardContent className="p-8 text-center">
                 <ArrowUpDown className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">No completed swaps yet</h3>
-                <p className="text-muted-foreground">Your completed swaps and transactions will appear here.</p>
+                <h3 className="text-lg font-semibold mb-2">
+                  No completed swaps yet
+                </h3>
+                <p className="text-muted-foreground">
+                  Your completed swaps and transactions will appear here.
+                </p>
               </CardContent>
             </Card>
           </TabsContent>
         </Tabs>
       </div>
     </div>
-  )
+  );
 }

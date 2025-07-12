@@ -1,33 +1,41 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useAuth } from "@/contexts/AuthContext"
-import { useRouter } from "next/navigation"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Recycle } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
+import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Recycle } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function SignupPage() {
   const [formData, setFormData] = useState({
-    name: "",
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
     confirmPassword: "",
     agreeToTerms: false,
-  })
-  const [loading, setLoading] = useState(false)
-  const { signup } = useAuth()
-  const router = useRouter()
-  const { toast } = useToast()
+  });
+
+  const [loading, setLoading] = useState(false);
+  const { signup } = useAuth();
+  const router = useRouter();
+  const { toast } = useToast();
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
+    e.preventDefault();
+    setLoading(true);
 
     try {
       if (formData.password !== formData.confirmPassword) {
@@ -35,8 +43,8 @@ export default function SignupPage() {
           title: "Password mismatch",
           description: "Please make sure your passwords match.",
           variant: "destructive",
-        })
-        return
+        });
+        return;
       }
 
       if (!formData.agreeToTerms) {
@@ -44,38 +52,39 @@ export default function SignupPage() {
           title: "Terms required",
           description: "Please agree to the terms and conditions.",
           variant: "destructive",
-        })
-        return
+        });
+        return;
       }
 
-      const result = await signup(formData)
+      const result = await signup(formData);
       if (result.success) {
         toast({
           title: "Welcome to ReWear!",
-          description: "Your account has been created successfully. You received 50 welcome points!",
-        })
-        router.push("/dashboard")
+          description:
+            "Your account has been created successfully. You received 50 welcome points!",
+        });
+        router.push("/dashboard");
       } else {
         toast({
           title: "Registration failed",
           description: result.error || "Please try again later.",
           variant: "destructive",
-        })
+        });
       }
     } catch (error) {
       toast({
         title: "Registration failed",
         description: "An unexpected error occurred. Please try again.",
         variant: "destructive",
-      })
+      });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
-  }
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-muted/50 p-4">
@@ -85,17 +94,29 @@ export default function SignupPage() {
             <Recycle className="h-8 w-8 text-green-600" />
           </div>
           <CardTitle className="text-2xl">Join ReWear</CardTitle>
-          <CardDescription>Create your account and start your sustainable fashion journey</CardDescription>
+          <CardDescription>
+            Create your account and start your sustainable fashion journey
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Full Name</Label>
+              <Label htmlFor="firstName">First Name</Label>
               <Input
-                id="name"
-                placeholder="Enter your full name"
-                value={formData.name}
-                onChange={(e) => handleInputChange("name", e.target.value)}
+                id="firstName"
+                placeholder="First name"
+                value={formData.firstName}
+                onChange={(e) => handleInputChange("firstName", e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="lastName">Last Name</Label>
+              <Input
+                id="lastName"
+                placeholder="Last name"
+                value={formData.lastName}
+                onChange={(e) => handleInputChange("lastName", e.target.value)}
                 required
               />
             </div>
@@ -128,27 +149,11 @@ export default function SignupPage() {
                 type="password"
                 placeholder="Confirm your password"
                 value={formData.confirmPassword}
-                onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("confirmPassword", e.target.value)
+                }
                 required
               />
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="terms"
-                checked={formData.agreeToTerms}
-                onCheckedChange={(checked) => handleInputChange("agreeToTerms", checked)}
-              />
-              <Label htmlFor="terms" className="text-sm">
-                I agree to the{" "}
-                <Link href="/terms" className="text-primary hover:underline">
-                  Terms of Service
-                </Link>{" "}
-                and{" "}
-                <Link href="/privacy" className="text-primary hover:underline">
-                  Privacy Policy
-                </Link>
-              </Label>
             </div>
 
             <Button type="submit" className="w-full" disabled={loading}>
@@ -165,5 +170,5 @@ export default function SignupPage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

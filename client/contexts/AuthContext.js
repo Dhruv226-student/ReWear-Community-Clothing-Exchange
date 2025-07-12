@@ -1,103 +1,155 @@
-"use client"
+"use client";
 
-import { createContext, useContext, useState, useEffect } from "react"
+import { createContext, useContext, useEffect, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  loginUser,
+  fetchCurrentUser,
+  logoutUser,
+  signupUser,
+} from "@/services/api/auth";
 
-const AuthContext = createContext({})
+const AuthContext = createContext();
 
-export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    // Check for stored user session
-    const storedUser = localStorage.getItem("rewear_user")
-    if (storedUser) {
-      const userData = JSON.parse(storedUser)
-      setUser(userData)
-      setIsAuthenticated(true)
-    }
-    setLoading(false)
-  }, [])
-
-  const login = async (email, password) => {
-    setLoading(true)
-    try {
-      // Mock authentication - replace with actual API call
-      if (email && password) {
-        const mockUser = {
-          id: "1",
-          email,
-          name: email.split("@")[0],
-          points: 150,
-          avatar: "/placeholder.svg?height=40&width=40",
-        }
-
-        setUser(mockUser)
-        setIsAuthenticated(true)
-        localStorage.setItem("rewear_user", JSON.stringify(mockUser))
-        return { success: true, user: mockUser }
-      }
-      throw new Error("Invalid credentials")
-    } catch (error) {
-      return { success: false, error: error.message }
-    } finally {
-      setLoading(false)
-    }
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
   }
+  return context;
+};
+
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const queryClient = useQueryClient();
+
+  // Check if user is already logged in on mount
+  useEffect(() => {
+    const token = localStorage.getItem("access_token");
+    if (token) {
+      setIsAuthenticated(true);
+    }
+    setIsLoading(false);
+  }, []);
+
+  // // Fetch current user query
+  // const { data: currentUser, isLoading: isLoadingUser } = useQuery({
+  //   queryKey: ["currentUser"],
+  //   queryFn: fetchCurrentUser,
+  //   enabled: isAuthenticated,
+  //   onSuccess: (data) => {
+  //     setUser(data.data.user);
+  //   },
+  //   onError: () => {
+  //     // If fetching user fails, logout
+  //     handleLogout();
+  //   },
+  // });
+
+  // Login mutation
+  const loginMutation = useMutation({
+    mutationFn: loginUser,
+    onSuccess: (data) => {
+      if (data.success) {
+        // Store tokens
+        localStorage.setItem("access_token", data.data.tokens.access.token);
+        localStorage.setItem("refresh_token", data.data.tokens.refresh.token);
+
+        // Update state
+        setUser(data.data.user);
+        setIsAuthenticated(true);
+
+        // Invalidate and refetch user data
+        queryClient.invalidateQueries(["currentUser"]);
+      }
+    },
+    onError: (error) => {
+      console.error("Login error:", error);
+    },
+  });
+
+  // Logout mutation
+  const logoutMutation = useMutation({
+    mutationFn: logoutUser,
+    onSuccess: () => {
+      handleLogout();
+    },
+    onError: () => {
+      // Even if logout API fails, clear local data
+      handleLogout();
+    },
+  });
+
+  const handleLogout = () => {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    setUser(null);
+    setIsAuthenticated(false);
+    queryClient.clear();
+  };
+
+  // Login function
+  const login = async (email, password) => {
+    try {
+      const result = await loginMutation.mutateAsync({ email, password });
+      return { success: true, data: result };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.response?.data?.message || "Login failed",
+      };
+    }
+  };
 
   const signup = async (userData) => {
-    setLoading(true)
     try {
-      // Mock registration - replace with actual API call
-      const mockUser = {
-        id: Date.now().toString(),
-        email: userData.email,
-        name: userData.name,
-        points: 50, // Welcome bonus
-        avatar: "/placeholder.svg?height=40&width=40",
+      const response = await signupUser(userData);
+
+      if (response.success) {
+        // Store tokens in localStorage or cookies
+        localStorage.setItem("accessToken", response.data.tokens.access.token);
+        localStorage.setItem(
+          "refreshToken",
+          response.data.tokens.refresh.token
+        );
+
+        // Set user data
+        setUser(response.data.user);
+
+        return { success: true, user: response.data.user };
+      } else {
+        return { success: false, error: response.message || "Signup failed" };
       }
-
-      setUser(mockUser)
-      setIsAuthenticated(true)
-      localStorage.setItem("rewear_user", JSON.stringify(mockUser))
-      return { success: true, user: mockUser }
     } catch (error) {
-      return { success: false, error: error.message }
-    } finally {
-      setLoading(false)
+      console.error("Signup error:", error);
+      return {
+        success: false,
+        error: error.response?.data?.message || "Network error occurred",
+      };
     }
-  }
+  };
 
-  const logout = () => {
-    setUser(null)
-    setIsAuthenticated(false)
-    localStorage.removeItem("rewear_user")
-  }
-
-  const updateUser = (updatedData) => {
-    const updatedUser = { ...user, ...updatedData }
-    setUser(updatedUser)
-    localStorage.setItem("rewear_user", JSON.stringify(updatedUser))
-  }
+  // Logout function
+  const logout = async () => {
+    try {
+      await logoutMutation.mutateAsync();
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  };
 
   const value = {
     user,
     isAuthenticated,
-    loading,
+    isLoading: isLoading || loginMutation.isLoading,
     login,
-    signup,
     logout,
-    updateUser,
-  }
+    signup,
+    loginError: loginMutation.error,
+    isLoginLoading: loginMutation.isLoading,
+  };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-}
-
-export const useAuth = () => {
-  const context = useContext(AuthContext)
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider")
-  }
-  return context
-}
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
