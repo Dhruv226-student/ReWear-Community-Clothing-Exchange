@@ -9,10 +9,10 @@
 1. **Jaimin Vaddoriya**
    📧 jaiminvaddoriya194@gmail.com
 
-2. **Jay Rathod** 
+2. **Jay Rathod**
    📧 rathodjay0026@gmail.com
 
-3. **Darshan Tarpada** 
+3. **Darshan Tarpada**
    📧 darshantarpada66@gmail.com
 
 4. **Dhruv Patel**  
@@ -22,20 +22,20 @@
 
 ## 🚀 Tech Stack
 
-- **Frontend**: Next.js + Tailwind CSS  
-- **Backend**: Node.js + Express  
-- **Database**: MongoDB  
-- **Authentication**: JWT  
+- **Frontend**: Next.js + Tailwind CSS
+- **Backend**: Node.js + Express
+- **Database**: MongoDB
+- **Authentication**: JWT
 <!-- - **Hosting**: Vercel (Frontend), Railway / Render (Backend) -->
 
 ---
 
 ## 🧩 Core Features
 
-- User registration and login  
-- Upload and browse clothing items  
-- Swap items or redeem via points  
-- Admin moderation panel  
+- User registration and login
+- Upload and browse clothing items
+- Swap items or redeem via points
+- Admin moderation panel
 - User dashboard with swap tracking
 
 ---
@@ -61,3 +61,11 @@ npm run dev
 # In a new terminal, start the frontend
 cd ../client
 npm run dev
+
+---
+
+## 🧩 Video link
+- https://drive.google.com/file/d/1ni0vZNYRc_PMP2tChYEAV0pIcWUYxB1Y/view?usp=sharing
+
+---
+```
