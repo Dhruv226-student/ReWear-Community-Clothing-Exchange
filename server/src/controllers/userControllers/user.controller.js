@@ -4,11 +4,9 @@ const catchAsync = require('../../utils/catchAsync');
 const { FILES_FOLDER, FILE_QUALITY, FILE_SIZE } = require('../../helper/constant.helper');
 const {
     saveFile,
-    compressFileUsingBuffer,
-    compressFile,
+
     compressFileUsingPath,
-    resizeFileUsingPath,
-    resizeFileUsingBuffer,
+
 } = require('../../services/files.service');
 const MESSAGE = require('../../config/message.json');
 
