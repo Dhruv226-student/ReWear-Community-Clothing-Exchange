@@ -50,3 +50,13 @@ exports.getItemDtl = async (filter, projection = {}, options = {}) => {
 exports.updateItem = async (filter, update, options = {}) => {
     return Item.findOneAndUpdate(filter, update, options);
 };
+
+/**
+ * Delete
+ * @param {Object} filter
+ * @param {import('mongoose').QueryOptions} options
+ * @returns {Promise<Item>}
+ */
+exports.deleteItem = async (filter, options = {}) => {
+    return Item.findOneAndDelete(filter, options);
+};
