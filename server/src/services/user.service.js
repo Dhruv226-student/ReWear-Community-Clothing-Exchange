@@ -23,9 +23,10 @@ exports.update = async (filter, update, options = {}) => {
  * @param {Object} filter
  * @returns {Promise<User>}
  */
-exports.get = async (filter) => {
-    return User.findOne(filter);
+exports.get = async (filter, populate = '') => {
+  return User.findOne(filter).populate(populate);
 };
+
 /**
  * Get users by filter.
  * @param {Object} filter
